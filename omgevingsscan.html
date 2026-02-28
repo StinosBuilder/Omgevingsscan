@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Omgevingsscan</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --navy:      #23296c;
+      --navy-dark: #151e5c;
+      --navy-mid:  #2d44b0;
+      --gold:      #d4a96a;
+      --gold-light:#f0dbb5;
+      --gold-pale: #fdf6ec;
+      --pb-blue:   #3251c4;
+      --pb-light:  #eaedfa;
+    }
+
+    /* ── ACHTERGROND: hele pagina ── */
+    html {
+      min-height: 100%;
+    }
+    html::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url('Background.jpg');
+      background-size: cover; background-position: center 40%;
+      filter: brightness(0.60) saturate(0.80);
+      z-index: -2;
+    }
+    html::after {
+      content: ''; position: fixed; inset: 0;
+      background: linear-gradient(160deg, rgba(12,18,60,0.60) 0%, rgba(16,24,72,0.42) 100%);
+      z-index: -1;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+      background: transparent;
+      color: white;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER (volledig transparant) ── */
+    header {
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+      box-shadow: none;
+      padding: 0;
+    }
+    .header-bg { display: none; }
+    .header-overlay { display: none; }
+    .header-content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; gap: 20px;
+      padding: 22px 36px;
+    }
+    .header-logo { height: 52px; width: auto; filter: none; flex-shrink: 0; }
+    .header-divider { width: 1.5px; height: 36px; background: rgba(255,255,255,0.30); flex-shrink: 0; }
+    .header-text h1 { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.4px; color: white; }
+    .header-text h1 span { color: rgba(255,255,255,0.80); }
+    .header-text p { font-size: 0.80rem; color: rgba(255,255,255,0.60); margin-top: 2px; font-weight: 500; }
+
+    /* ── PAGE VISIBILITY ── */
+    .page-hidden { display: none !important; }
+
+    /* ── LANDING PAGE ── */
+    .landing-page {
+      min-height: calc(100vh - 80px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px 20px;
+    }
+    .landing-card {
+      width: 80%; max-width: 1100px;
+      background: rgba(255,255,255,0.10);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+      padding: 40px 44px 36px;
+    }
+    .landing-header {
+      margin-bottom: 28px;
+    }
+    .landing-title {
+      font-size: 1.3rem; font-weight: 800; color: white;
+      margin-bottom: 4px; letter-spacing: -0.3px;
+    }
+    .landing-subtitle {
+      font-size: 0.82rem; color: rgba(255,255,255,0.55);
+      font-weight: 500;
+    }
+    .landing-body {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+      align-items: start;
+    }
+    .landing-left { display: flex; flex-direction: column; gap: 18px; }
+    .landing-right { display: flex; flex-direction: column; gap: 18px; }
+    .landing-section {
+      margin-bottom: 0;
+    }
+    .landing-label {
+      font-size: 0.70rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      color: rgba(255,255,255,0.60); margin-bottom: 6px; display: block;
+    }
+    .landing-input {
+      border: 1.5px solid rgba(255,255,255,0.22);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 0.95rem; font-weight: 500;
+      color: white; background: rgba(255,255,255,0.10);
+      font-family: inherit; width: 100%; transition: all 0.15s;
+    }
+    .landing-input:hover { border-color: rgba(255,255,255,0.40); background: rgba(255,255,255,0.15); }
+    .landing-input:focus { outline: none; border-color: rgba(255,255,255,0.65); box-shadow: 0 0 0 3px rgba(255,255,255,0.10); background: rgba(255,255,255,0.18); }
+    .landing-input::placeholder { color: rgba(255,255,255,0.35); font-weight: 400; }
+    .landing-textarea {
+      border: 1.5px solid rgba(255,255,255,0.22);
+      border-radius: 8px; padding: 10px 14px; font-size: 0.855rem;
+      color: white; background: rgba(255,255,255,0.10);
+      font-family: inherit; width: 100%; resize: vertical; min-height: 120px; transition: border-color 0.15s;
+    }
+    .landing-textarea:hover { border-color: rgba(255,255,255,0.40); background: rgba(255,255,255,0.15); }
+    .landing-textarea:focus { outline: none; border-color: rgba(255,255,255,0.65); box-shadow: 0 0 0 3px rgba(255,255,255,0.10); background: rgba(255,255,255,0.18); }
+    .landing-textarea::placeholder { color: rgba(255,255,255,0.32); }
+    .landing-cats { display: flex; flex-wrap: wrap; gap: 8px; }
+    .landing-divider {
+      border: none; border-top: 1px solid rgba(255,255,255,0.12);
+      margin: 18px 0;
+    }
+
+    /* Template cards op landing */
+    .tpl-section-title {
+      font-size: 0.70rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      color: rgba(255,255,255,0.60); margin-bottom: 10px; display: block;
+    }
+    .tpl-grid { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; }
+    .tpl-card {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .tpl-card:hover { border-color: rgba(255,255,255,0.40); background: rgba(255,255,255,0.12); }
+    .tpl-card.selected { border-color: var(--pb-blue); background: rgba(50,81,196,0.15); }
+    .tpl-icon { font-size: 1.15rem; flex-shrink: 0; }
+    .tpl-info { flex: 1; min-width: 0; }
+    .tpl-name { font-size: 0.87rem; font-weight: 600; color: white; }
+    .tpl-meta { font-size: 0.72rem; color: rgba(255,255,255,0.50); margin-top: 2px; }
+    .tpl-empty { text-align: center; padding: 20px; color: rgba(255,255,255,0.35); font-size: 0.84rem; }
+
+    .landing-actions {
+      display: flex; justify-content: flex-end; gap: 10px; margin-top: 28px;
+    }
+    .btn-start {
+      background: var(--pb-blue); color: white; font-weight: 700;
+      padding: 12px 28px; font-size: 0.95rem; border-radius: 50px;
+      border: 2px solid var(--pb-blue); transition: all 0.15s;
+    }
+    .btn-start:hover { background: var(--navy); border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(30,46,122,0.40); }
+
+    /* ── INFO PANEL (used on main page for inline editing) ── */
+    .info-panel {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+    .info-panel-inner {
+      max-width: 1060px; margin: 0 auto;
+      padding: 28px 20px;
+      display: grid; grid-template-columns: 260px 1fr;
+      gap: 24px; align-items: start;
+    }
+    .info-col { display: flex; flex-direction: column; gap: 5px; }
+    .info-label {
+      font-size: 0.70rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      color: rgba(255,255,255,0.60); margin-bottom: 2px;
+    }
+    .info-input {
+      border: 1.5px solid rgba(255,255,255,0.22);
+      border-radius: 7px; padding: 8px 12px;
+      font-size: 0.9rem; font-weight: 500;
+      color: white; background: rgba(255,255,255,0.12);
+      font-family: inherit; width: 100%; transition: all 0.15s;
+    }
+    .info-input:hover { border-color: rgba(255,255,255,0.40); background: rgba(255,255,255,0.17); }
+    .info-input:focus { outline: none; border-color: rgba(255,255,255,0.65); box-shadow: 0 0 0 3px rgba(255,255,255,0.10); background: rgba(255,255,255,0.20); }
+    .info-input::placeholder { color: rgba(255,255,255,0.35); font-weight: 400; }
+    .info-right { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .info-textarea {
+      border: 1.5px solid rgba(255,255,255,0.22);
+      border-radius: 7px; padding: 8px 12px; font-size: 0.855rem;
+      color: white; background: rgba(255,255,255,0.10);
+      font-family: inherit; width: 100%; resize: vertical; min-height: 72px; transition: border-color 0.15s;
+    }
+    .info-textarea:focus { outline: none; border-color: rgba(255,255,255,0.65); box-shadow: 0 0 0 3px rgba(255,255,255,0.10); background: rgba(255,255,255,0.16); }
+    .info-textarea::placeholder { color: rgba(255,255,255,0.32); }
+
+    /* ── CATEGORY FILTER DROPDOWN (naast Klant) ── */
+    .cat-dropdown-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    .cat-dropdown-trigger {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 7px;
+      font-size: 0.82rem; font-weight: 600; cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.22);
+      color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.12);
+      transition: all 0.15s; user-select: none; white-space: nowrap;
+    }
+    .cat-dropdown-trigger:hover { border-color: rgba(255,255,255,0.50); background: rgba(255,255,255,0.20); color: white; }
+    .cat-dropdown-trigger svg { opacity: 0.6; transition: transform 0.2s; }
+    .cat-dropdown-wrap:hover .cat-dropdown-trigger svg { transform: rotate(180deg); opacity: 1; }
+    .cat-dropdown-panel {
+      position: absolute; top: 100%; left: 0; margin-top: 6px;
+      background: rgba(20,28,70,0.95);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-radius: 12px; border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+      padding: 14px 16px; min-width: 260px;
+      opacity: 0; pointer-events: none; transform: translateY(-4px);
+      transition: opacity 0.18s, transform 0.18s;
+      z-index: 100;
+    }
+    .cat-dropdown-wrap:hover .cat-dropdown-panel {
+      opacity: 1; pointer-events: all; transform: translateY(0);
+    }
+    .cat-filter-label {
+      font-size: 0.70rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      color: rgba(255,255,255,0.60); margin-bottom: 8px; display: block;
+    }
+    .cat-filter-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .cat-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 11px; border-radius: 99px;
+      font-size: 0.77rem; font-weight: 600; cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.80); background: rgba(255,255,255,0.10);
+      user-select: none; transition: all 0.13s;
+    }
+    .cat-chip input[type="checkbox"] { width: 13px; height: 13px; accent-color: white; cursor: pointer; }
+    .cat-chip:hover { border-color: rgba(255,255,255,0.55); color: white; background: rgba(255,255,255,0.18); }
+    .cat-chip.checked { background: var(--pb-blue); border-color: var(--pb-blue); color: white; }
+    .cat-chip.checked input[type="checkbox"] { accent-color: white; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1060px; margin: 24px auto; padding: 0 20px; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .toolbar-left { display: flex; gap: 10px; align-items: center; }
+
+    /* ── BUTTONS ── */
+    button {
+      cursor: pointer; border: none; border-radius: 50px;
+      font-size: 0.875rem; font-weight: 600; padding: 9px 18px;
+      transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 0.1px;
+    }
+    .btn-primary { background: rgba(255,255,255,0.95); color: var(--navy); }
+    .btn-primary:hover { background: white; transform: translateY(-1px); box-shadow: 0 4px 18px rgba(0,0,0,0.22); }
+    .btn-success { background: var(--pb-blue); color: white; font-weight: 700; border: 2px solid var(--pb-blue); }
+    .btn-success:hover { background: var(--navy); border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 4px 18px rgba(30,46,122,0.40); }
+    .btn-success:disabled { background: rgba(255,255,255,0.20); border-color: rgba(255,255,255,0.20); color: rgba(255,255,255,0.40); cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-danger { background: transparent; color: #fc8181; border: 1px solid rgba(252,129,129,0.40); padding: 5px 12px; font-size: 0.8rem; border-radius: 50px; }
+    .btn-danger:hover { background: rgba(252,129,129,0.12); border-color: rgba(252,129,129,0.65); }
+
+    /* ── CARD / TABLE (frosted glass) ── */
+    .card {
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.20);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.20);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: rgba(255,255,255,0.15); border-bottom: 1px solid rgba(255,255,255,0.18); }
+    thead th {
+      padding: 11px 14px; text-align: left;
+      font-size: 0.71rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: rgba(255,255,255,0.80);
+    }
+    thead th:nth-child(2) { width: 150px; }
+    thead th:nth-child(4) { width: 58px; text-align: center; }
+    thead th:nth-child(5) { width: 110px; }
+    thead th:last-child  { width: 66px; text-align: center; }
+
+    tbody tr.row-main { border-bottom: 1px solid rgba(255,255,255,0.08); transition: background 0.1s; }
+    tbody tr.row-main:hover { background: rgba(255,255,255,0.08); }
+    tbody tr.row-main.is-active { background: rgba(255,255,255,0.10); }
+    tbody tr.row-main.hidden { display: none; }
+    tbody tr.row-detail.hidden { display: none; }
+
+    td { padding: 10px 14px; vertical-align: middle; color: rgba(255,255,255,0.90); }
+    td:last-child  { text-align: center; }
+
+    .checkbox-wrap { display: flex; justify-content: center; }
+    .checkbox-wrap input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: white; }
+
+    .naam-input {
+      border: 1px solid transparent; border-radius: 6px; padding: 5px 8px;
+      font-size: 0.9rem; font-weight: 500; color: white; background: transparent; width: 100%; transition: all 0.15s;
+    }
+    .naam-input:hover { border-color: rgba(255,255,255,0.30); background: rgba(255,255,255,0.08); }
+    .naam-input:focus { border-color: rgba(255,255,255,0.60); background: rgba(255,255,255,0.12); outline: none; box-shadow: 0 0 0 3px rgba(255,255,255,0.10); }
+
+    /* Score pills */
+    .score-group { display: flex; gap: 5px; flex-wrap: wrap; }
+    .score-pill { padding: 3px 10px; border-radius: 99px; font-size: 0.74rem; font-weight: 600; cursor: pointer; border: 1.5px solid transparent; transition: all 0.15s; white-space: nowrap; }
+    .score-pill.niet  { border-color: #fc8181; color: #c53030; background: #fff5f5; }
+    .score-pill.niet.selected  { background: #fc8181; color: white; border-color: #fc8181; }
+    .score-pill.optim { border-color: #f6ad55; color: #b7791f; background: #fffbeb; }
+    .score-pill.optim.selected { background: #f6ad55; color: white; border-color: #f6ad55; }
+    .score-pill.goed  { border-color: #68d391; color: #276749; background: #f0fff4; }
+    .score-pill.goed.selected  { background: #48bb78; color: white; border-color: #48bb78; }
+    .score-pill:hover { opacity: 0.8; transform: scale(1.04); }
+    /* Niet-geselecteerde pills vervagen zodra er een keuze is gemaakt */
+    .score-group:has(.selected) .score-pill:not(.selected) {
+      opacity: 0.28; filter: grayscale(0.6); transform: none;
+    }
+    .score-group:has(.selected) .score-pill:not(.selected):hover {
+      opacity: 0.55; filter: grayscale(0.3);
+    }
+
+    /* Category select */
+    .cat-select {
+      border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 5px 26px 5px 8px;
+      font-size: 0.81rem; font-weight: 500; color: white;
+      background: rgba(255,255,255,0.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='white' opacity='.6'/%3E%3C/svg%3E") no-repeat right 8px center;
+      appearance: none; -webkit-appearance: none; cursor: pointer; transition: all 0.15s; width: 100%;
+    }
+    .cat-select option { background: var(--navy); color: white; }
+    .cat-select:focus { outline: none; border-color: rgba(255,255,255,0.60); box-shadow: 0 0 0 3px rgba(255,255,255,0.10); }
+    .cat-select:hover { border-color: rgba(255,255,255,0.45); background-color: rgba(255,255,255,0.18); }
+
+    /* Expand button */
+    .btn-expand { background: rgba(255,255,255,0.10); border: 1.5px solid rgba(255,255,255,0.22); color: white; padding: 4px 12px; border-radius: 50px; font-size: 0.77rem; transition: all 0.15s; }
+    .btn-expand:hover { border-color: rgba(255,255,255,0.50); background: rgba(255,255,255,0.18); }
+    .btn-expand.open  { background: rgba(255,255,255,0.20); border-color: rgba(255,255,255,0.50); }
+    .btn-expand.incomplete { background: rgba(246,173,85,0.25); border-color: #f6ad55; color: #f6ad55; }
+    .btn-expand.incomplete:hover { background: rgba(246,173,85,0.35); border-color: #f6ad55; }
+
+    /* Detail panel */
+    .detail-inner { padding: 16px 22px 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; background: rgba(0,0,0,0.18); backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.10); }
+    .field-group label { display: block; font-size: 0.70rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+    .field-group.niet  label { color: #fc8181; }
+    .field-group.optim label { color: #f6ad55; }
+    .field-group.goed  label { color: #68d391; }
+    .field-group textarea { width: 100%; border: 1.5px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 9px 11px; font-size: 0.845rem; color: white; font-family: inherit; resize: vertical; min-height: 86px; transition: border-color 0.15s; background: rgba(255,255,255,0.08); }
+    .field-group textarea:focus { outline: none; }
+    .field-group textarea::placeholder { color: rgba(255,255,255,0.30); }
+    .field-group.niet  textarea:focus { border-color: #fc8181; box-shadow: 0 0 0 3px rgba(252,129,129,0.18); }
+    .field-group.optim textarea:focus { border-color: #f6ad55; box-shadow: 0 0 0 3px rgba(246,173,85,0.18); }
+    .field-group.goed  textarea:focus { border-color: #68d391; box-shadow: 0 0 0 3px rgba(104,211,145,0.18); }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 52px 24px; color: rgba(255,255,255,0.45); }
+    .empty-state svg { margin-bottom: 14px; opacity: 0.35; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ── PREVIEW MODAL ── */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(10,16,50,0.72);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 32px 20px 40px;
+      overflow-y: auto;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+    .modal-shell {
+      width: 100%; max-width: 760px;
+      display: flex; flex-direction: column; gap: 0;
+      transform: translateY(18px);
+      transition: transform 0.22s;
+    }
+    .modal-backdrop.open .modal-shell { transform: translateY(0); }
+
+    /* Toolbar boven het papier */
+    .modal-toolbar {
+      background: var(--navy-dark);
+      border-radius: 12px 12px 0 0;
+      padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+    }
+    .modal-toolbar-title {
+      color: white; font-size: 0.82rem; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .modal-toolbar-actions { display: flex; gap: 8px; }
+    .btn-download {
+      background: white;
+      color: var(--navy); font-weight: 700; border: none; border-radius: 50px;
+      padding: 8px 20px; font-size: 0.84rem; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-download:hover { background: var(--pb-light); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(30,46,122,0.15); }
+    .btn-close-modal {
+      background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.75);
+      border: 1px solid rgba(255,255,255,0.18); border-radius: 50px;
+      padding: 8px 14px; font-size: 0.84rem; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-close-modal:hover { background: rgba(255,255,255,0.18); color: white; }
+
+    /* A4 papier */
+    .doc-paper {
+      background: white;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      padding: 52px 60px 60px;
+      font-family: 'Segoe UI', Georgia, serif;
+      color: #1a202c;
+      line-height: 1.6;
+    }
+
+    /* Document header */
+    .doc-title-bar {
+      border-bottom: 3px solid var(--navy);
+      padding-bottom: 16px; margin-bottom: 24px;
+    }
+    .doc-main-title {
+      font-size: 1.55rem; font-weight: 700; color: var(--navy); margin: 0 0 4px;
+    }
+    .doc-subtitle { font-size: 0.85rem; color: #718096; margin: 0 0 3px; }
+    .doc-meta     { font-size: 0.78rem; color: #a0aec0; }
+
+    /* Intro / outro tekst */
+    .doc-intro, .doc-outro {
+      font-size: 0.95rem; color: #2d3748; line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .doc-outro { margin-top: 32px; margin-bottom: 0; }
+
+    /* Variabele sectie */
+    .doc-section { margin-bottom: 24px; }
+    .doc-cat-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.7px; color: #a0aec0; margin-bottom: 4px;
+    }
+    .doc-var-title {
+      font-size: 1.05rem; font-weight: 700; color: var(--navy);
+      border-left: 4px solid var(--pb-blue); padding-left: 12px;
+      margin-bottom: 8px;
+    }
+    .doc-score-badge {
+      display: inline-block; font-size: 0.76rem; font-weight: 700;
+      padding: 3px 11px; border-radius: 99px; border: 1.5px solid;
+      margin-bottom: 10px;
+    }
+    .doc-var-text { font-size: 0.92rem; color: #374151; line-height: 1.7; white-space: pre-wrap; }
+    .doc-divider { border: none; border-top: 1px solid #edf2f7; margin: 4px 0 20px; }
+
+    .doc-footer-line {
+      margin-top: 40px; padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 0.72rem; color: #a0aec0;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: var(--navy-dark); color: white;
+      padding: 12px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(30,46,122,0.30); opacity: 0; transform: translateY(10px);
+      transition: all 0.25s; pointer-events: none; z-index: 999;
+      border-left: 3px solid var(--pb-blue);
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 760px) {
+      .info-panel-inner { grid-template-columns: 1fr; }
+      .info-right { grid-template-columns: 1fr; }
+      .detail-inner { grid-template-columns: 1fr; }
+      .header-accent { display: none; }
+      .landing-body { grid-template-columns: 1fr; }
+      .landing-card { width: 95%; padding: 28px 20px; }
+    }
+
+    /* ── LIBRARY MODAL ── */
+    .lib-modal-backdrop {
+      position: fixed; inset: 0; z-index: 1100;
+      background: rgba(10,16,50,0.72);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 40px 20px; overflow-y: auto;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .lib-modal-backdrop.open { opacity: 1; pointer-events: all; }
+    .lib-modal-shell {
+      width: 100%; max-width: 560px;
+      background: white; border-radius: 14px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35); overflow: hidden;
+      transform: translateY(18px); transition: transform 0.22s;
+    }
+    .lib-modal-backdrop.open .lib-modal-shell { transform: translateY(0); }
+    .lib-modal-header {
+      background: var(--navy-dark);
+      padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .lib-modal-title { color: white; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .lib-modal-body { padding: 20px; }
+    .lib-section-label {
+      font-size: 0.70rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.6px; color: var(--navy); margin-bottom: 8px;
+    }
+    .lib-save-row { display: flex; gap: 8px; margin-bottom: 20px; }
+    .lib-name-input {
+      flex: 1; border: 1.5px solid #e2e8f0; border-radius: 8px;
+      padding: 8px 12px; font-size: 0.875rem; font-family: inherit; color: #1a202c;
+    }
+    .lib-name-input:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(30,44,110,0.10); }
+    .lib-name-input::placeholder { color: #a0aec0; }
+    .lib-divider { border: none; border-top: 1px solid #edf2f7; margin: 16px 0; }
+    .lib-list { display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto; }
+    .lib-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 14px; border: 1.5px solid #e8ecf4;
+      border-radius: 10px; background: #f8f9fd; transition: all 0.13s;
+    }
+    .lib-item:hover { border-color: #c4cfe8; background: #eef1fb; }
+    .lib-item-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .lib-item-info { flex: 1; min-width: 0; }
+    .lib-item-name { font-size: 0.875rem; font-weight: 600; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lib-item-meta { font-size: 0.73rem; color: #a0aec0; margin-top: 2px; }
+    .lib-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .btn-lib-load { background: var(--navy); color: white; padding: 5px 13px; font-size: 0.79rem; border-radius: 6px; font-weight: 600; }
+    .btn-lib-load:hover { background: var(--navy-mid); }
+    .btn-lib-exp { background: transparent; color: #b7791f; border: 1px solid #f6ad55; padding: 5px 10px; font-size: 0.79rem; border-radius: 6px; }
+    .btn-lib-exp:hover { background: #fffbeb; }
+    .btn-lib-del { background: transparent; color: #c53030; border: 1px solid #fed7d7; padding: 5px 10px; font-size: 0.79rem; border-radius: 6px; }
+    .btn-lib-del:hover { background: #fff5f5; }
+    .lib-empty { text-align: center; padding: 32px 20px; color: #a0aec0; font-size: 0.875rem; }
+
+    /* ── IMAGE UPLOAD ── */
+    .img-upload-row { grid-column: 1 / -1; margin-top: 6px; }
+    .img-upload-label { display: block; font-size: 0.70rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; color: rgba(255,255,255,0.70); }
+    .img-upload-area {
+      border: 2px dashed rgba(255,255,255,0.28); border-radius: 10px; padding: 14px 18px;
+      text-align: center; cursor: pointer; transition: all 0.15s; background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 58px;
+    }
+    .img-upload-area:hover { border-color: rgba(255,255,255,0.55); background: rgba(255,255,255,0.14); }
+    .img-upload-area.has-img { border-style: solid; border-color: rgba(255,255,255,0.30); padding: 8px 12px; justify-content: flex-start; gap: 12px; }
+    .img-upload-placeholder { font-size: 0.82rem; color: rgba(255,255,255,0.45); }
+    .img-thumbnail { max-height: 100px; max-width: 220px; border-radius: 6px; object-fit: contain; border: 1px solid rgba(255,255,255,0.20); flex-shrink: 0; }
+    .img-filename { font-size: 0.80rem; color: rgba(255,255,255,0.80); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .img-remove-btn { background: rgba(252,129,129,0.15); color: #fc8181; border: 1px solid rgba(252,129,129,0.35); border-radius: 6px; padding: 4px 10px; font-size: 0.78rem; cursor: pointer; margin-left: auto; flex-shrink: 0; }
+    .img-remove-btn:hover { background: rgba(252,129,129,0.28); }
+
+    /* ── UNMATCHED IMAGES MODAL ── */
+    .unmatch-backdrop {
+      position: fixed; inset: 0; z-index: 1200;
+      background: rgba(10,16,50,0.72); backdrop-filter: blur(4px);
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 40px 20px; overflow-y: auto;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .unmatch-backdrop.open { opacity: 1; pointer-events: all; }
+    .unmatch-shell {
+      width: 100%; max-width: 580px; background: white; border-radius: 14px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35); overflow: hidden;
+      transform: translateY(18px); transition: transform 0.22s;
+    }
+    .unmatch-backdrop.open .unmatch-shell { transform: translateY(0); }
+    .unmatch-header {
+      background: var(--navy-dark); padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .unmatch-title { color: white; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .unmatch-body { padding: 20px; }
+    .unmatch-intro { font-size: 0.84rem; color: #4a5568; margin-bottom: 14px; line-height: 1.5; }
+    .unmatch-list { display: flex; flex-direction: column; gap: 9px; max-height: 380px; overflow-y: auto; margin-bottom: 16px; }
+    .unmatch-item {
+      display: flex; align-items: center; gap: 11px;
+      padding: 9px 12px; border: 1.5px solid #e8ecf4; border-radius: 10px; background: #f8f9fd;
+    }
+    .unmatch-thumb { width: 54px; height: 42px; object-fit: contain; border-radius: 6px; border: 1px solid #e2e8f0; background: white; flex-shrink: 0; }
+    .unmatch-name { font-size: 0.82rem; color: #2d3748; font-weight: 500; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .unmatch-select {
+      border: 1.5px solid #e2e8f0; border-radius: 7px; padding: 6px 8px;
+      font-size: 0.81rem; font-family: inherit; color: #1a202c;
+      background: white; width: 190px; flex-shrink: 0;
+    }
+    .unmatch-select:focus { outline: none; border-color: var(--navy); }
+    .unmatch-footer { display: flex; justify-content: flex-end; gap: 8px; padding-top: 4px; }
+
+    /* ── DOC CATEGORY SECTION ── */
+    .doc-cat-section { margin-bottom: 28px; }
+    .doc-cat-section-header {
+      display: flex; align-items: baseline; gap: 10px;
+      margin: 0 0 14px;
+      padding-bottom: 9px;
+      border-bottom: 2.5px solid var(--pb-blue);
+    }
+    .doc-cat-section-title { font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+    .doc-cat-section-count { font-size: 0.73rem; color: #a0aec0; font-weight: 500; }
+    .doc-item-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 22px; height: 22px; background: var(--pb-blue); color: white;
+      border-radius: 50%; font-size: 0.70rem; font-weight: 700;
+      margin-right: 8px; flex-shrink: 0; vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-bg"></div>
+  <div class="header-overlay"></div>
+  <div class="header-content">
+    <img src="Logo wit.png" alt="Logo" class="header-logo"/>
+    <div class="header-divider"></div>
+    <div class="header-text">
+      <h1>Omgevings<span>scan</span></h1>
+      <p>De tool waarmee Proces Bouwers nederland productiever maakt</p>
+    </div>
+  </div>
+</header>
+
+<!-- ── LANDING PAGE ── -->
+<div id="landing-page" class="landing-page">
+  <div class="landing-card">
+    <div class="landing-header">
+      <div class="landing-title">Nieuwe omgevingsscan</div>
+      <div class="landing-subtitle">Configureer de projectinstellingen voordat je begint</div>
+    </div>
+
+    <div class="landing-body">
+      <!-- Links: klant, categorieën, templates -->
+      <div class="landing-left">
+        <div class="landing-section">
+          <label class="landing-label">Klant / Project</label>
+          <input class="landing-input" id="landing-klant" type="text"
+            placeholder="Voer klant- of projectnaam in…"/>
+        </div>
+
+        <div class="landing-section">
+          <label class="landing-label">Categorieën</label>
+          <div class="landing-cats" id="landing-cat-chips"></div>
+        </div>
+
+        <hr class="landing-divider"/>
+
+        <div class="landing-section">
+          <span class="tpl-section-title">Start vanuit een template (optioneel)</span>
+          <div class="tpl-grid" id="landing-tpl-list"></div>
+        </div>
+      </div>
+
+      <!-- Rechts: standaardteksten + startknop -->
+      <div class="landing-right">
+        <div class="landing-section">
+          <label class="landing-label">Standaard tekst bovenin document</label>
+          <textarea class="landing-textarea" id="landing-header-tekst"
+            placeholder="Introductietekst die bovenaan het document verschijnt…" style="min-height:150px;"></textarea>
+        </div>
+        <div class="landing-section">
+          <label class="landing-label">Standaard tekst onderaan document</label>
+          <textarea class="landing-textarea" id="landing-footer-tekst"
+            placeholder="Afsluitende tekst die onderaan het document verschijnt…" style="min-height:150px;"></textarea>
+        </div>
+
+        <div class="landing-actions">
+          <button class="btn-start" onclick="goToMain()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+            Scan starten
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN PAGE (tabel + toolbar) ── -->
+<div id="main-page" class="page-hidden">
+
+<!-- ── CONTAINER ── -->
+<div class="container">
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <button class="btn-primary" onclick="addRow()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Rij toevoegen
+      </button>
+      <button class="btn-primary" onclick="bulkImportImages()" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        Bulk afbeeldingen
+      </button>
+      <input type="file" id="bulk-img-input" multiple accept="image/png,image/jpeg,image/gif,image/webp" style="display:none" onchange="handleBulkImgImport(this)"/>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+    <button class="btn-primary" onclick="goToLanding()" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      Instellingen
+    </button>
+    <button class="btn-primary" onclick="openLibrary()" style="background:var(--navy-dark);">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      Bibliotheek
+    </button>
+    <button class="btn-success" id="btn-generate" onclick="showPreview()" disabled>
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+      </svg>
+      Document genereren
+    </button>
+    </div>
+  </div>
+
+  <!-- Tabel -->
+  <div class="card" style="overflow:visible;">
+    <table id="main-table">
+      <thead>
+        <tr>
+          <th>Onderdeel</th>
+          <th>Categorie</th>
+          <th>Score</th>
+          <th style="width:58px;text-align:center;">QW</th>
+          <th>Tekst</th>
+          <th>Verw.</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr id="empty-row">
+          <td colspan="6">
+            <div class="empty-state">
+              <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="3" y1="15" x2="21" y2="15"/>
+                <line x1="9" y1="3" x2="9" y2="21"/>
+              </svg>
+              <p>Geen rijen. Klik op <strong>+ Rij toevoegen</strong> om te starten.</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.06);border-radius:0 0 14px 14px;">
+      <button class="btn-primary" onclick="addRow()" style="font-size:0.82rem;padding:7px 14px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Rij toevoegen
+      </button>
+    </div>
+  </div>
+</div>
+</div><!-- /main-page -->
+
+<!-- ── UNMATCHED IMAGES MODAL ── -->
+<div class="unmatch-backdrop" id="unmatch-modal">
+  <div class="unmatch-shell">
+    <div class="unmatch-header">
+      <div class="unmatch-title">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        Niet herkende afbeeldingen
+      </div>
+      <button class="btn-close-modal" onclick="closeUnmatchedModal()">✕ Sluiten</button>
+    </div>
+    <div class="unmatch-body">
+      <p class="unmatch-intro">Deze afbeeldingen konden niet automatisch worden gekoppeld. Selecteer de juiste rij of kies <em>Overslaan</em>.</p>
+      <div class="unmatch-list" id="unmatch-list"></div>
+      <div class="unmatch-footer">
+        <button class="btn-primary" onclick="saveUnmatchedMappings()">✓ Koppelen & sluiten</button>
+        <button class="btn-close-modal" onclick="closeUnmatchedModal()" style="background:#f7f8fc;color:#4a5568;border:1px solid #e2e8f0;">Alles overslaan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── LIBRARY MODAL ── -->
+<div class="lib-modal-backdrop" id="lib-modal" onclick="closeLibOnBackdrop(event)">
+  <div class="lib-modal-shell">
+    <div class="lib-modal-header">
+      <div class="lib-modal-title">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+        Scan Bibliotheek
+      </div>
+      <button class="btn-close-modal" onclick="closeLibrary()">✕ Sluiten</button>
+    </div>
+    <div class="lib-modal-body">
+      <div class="lib-section-label">Huidige scan opslaan</div>
+      <div class="lib-save-row">
+        <input class="lib-name-input" id="lib-save-name" type="text" placeholder="Naam voor deze versie… (bijv. FCCA v1, Concept 2026)"/>
+        <button class="btn-primary" onclick="saveToLibrary()">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+          </svg>
+          Opslaan
+        </button>
+      </div>
+      <hr class="lib-divider"/>
+      <div class="lib-section-label">Opgeslagen scans</div>
+      <div class="lib-list" id="lib-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PREVIEW MODAL ── -->
+<div class="modal-backdrop" id="preview-modal" onclick="closePreviewOnBackdrop(event)">
+  <div class="modal-shell">
+    <div class="modal-toolbar">
+      <div class="modal-toolbar-title">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Documentvoorbeeld
+      </div>
+      <div class="modal-toolbar-actions">
+        <button class="btn-download" onclick="downloadDoc()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Downloaden als Word
+        </button>
+        <button class="btn-close-modal" onclick="closePreview()">✕ Sluiten</button>
+      </div>
+    </div>
+    <div class="doc-paper" id="doc-paper-content"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  // ── Voorbeelddata FCCA (AFAS) ──
+  const SEED_DATA = {
+    counter: 21,
+    headerTekst: 'FCCA (AFAS)',
+    docHeaderTekst: 'Deze omgevingsscan is uitgevoerd om knelpunten en onbenutte kansen in de huidige AFAS-omgeving te identificeren en zichtbaar maken. Vanuit deze scan kunnen gerichte keuzes worden gemaakt over de vervolgstappen in de optimalisatie van AFAS en de impact bepalen van deze optimalisatie op de organisatie.\n\nHet uitgangspunt is structurele werkdrukverlaging voor de ondersteunende afdelingen (HR en Finance), het verhogen van efficiëntie en het versterken van de interne controle (compliance), zonder dat hiervoor een fulltime applicatiebeheerder nodig is.',
+    docFooterTekst: 'Deze omgevingsscan biedt een overzicht van huidige knelpunten en onbenutte kansen binnen de AFAS-omgeving. Op basis van deze informatie kan FCCA bepalen welke onderdelen zij in AFAS willen optimaliseren.\n\nAls FCCA naast de reeds besproken optimalisaties nog meer wil aanpakken, dan kan er in overleg worden gekeken waar de prioriteiten liggen en gezamenlijk een realistische planning voor 2026 worden opgesteld, rekening houdende met de inzet van ProcesBouwers en FCCA als organisatie.',
+    activeCats: ['Algemeen','CRM','HRM','Financieel','Ordermanagement','Abonnementen','Projecten','Fiscaal'],
+    rows: [
+      { id:1,  naam:'Workflows / Dossieritems',    categorie:'Algemeen',       actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'Uit analyse over 2025 blijkt dat de gemiddelde doorlooptijd van workflows vrij uiteen lopen. De meeste workflows hebben een doorlooptijd van enkele dagen, maar financiële workflows zoals contractverlenging (financieel), inkooprelatie en contract financieel hebben een gemiddelde doorlooptijd van meer dan 10 dagen. Ook twee HR-workflows zoals verlofaanvraag en medewerker opleiding hebben beiden een gemiddelde doorlooptijd van meer dan 15 dagen.\n\nWanneer er naar de frequentie van niet-akkoord wordt gekeken is te zien dat de meeste afkeuringen ook in bovengenoemde workflows naar boven komen. Het advies is om te kijken naar de analyse om te beoordelen of er optimalisatie in het proces nodig is om de doorlooptijd te verlagen.', Goed:'' }},
+      { id:2,  naam:'Logging',                      categorie:'Algemeen',       actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Er staat momenteel minimale logging aan in de AFAS-omgeving voor HRM, ERM en Finance. Het aanzetten van de logging is een kleine technische handeling, maar levert cruciale inzichten op in wat er in de omgeving gebeurt en door wie. Dit kan eventuele vragen bij audits voorkomen.', Optim:'', Goed:'' }},
+      { id:3,  naam:'Autorisatie',                  categorie:'Algemeen',       actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'In het huidige autorisatiemodel zijn er in totaal 117 groepen waarvan er 80 automatisch worden gevuld op basis van functie, selectie of systeem. 30% (37) van de groepen worden nog handmatig gevuld. Het handmatig vullen van groepen is een onderdeel wat veel onderhoud kost en gevoelig is voor fouten.\n\nHet advies is om kritisch te kijken in hoeverre de handmatige groepen middels aanvragen van persoonlijke rollen geautomatiseerd kunnen worden voor zowel een betere logging als voorkoming van fouten.', Goed:'' }},
+      { id:4,  naam:'Audits',                       categorie:'Financieel',     actief:true, score:'Goed',  expanded:false, teksten:{ Niet:'', Optim:'', Goed:'Voor de Salarisverwerking worden de Payroll Audits gebruikt en vinden controles plaats bij afwijkingen. Deze controles zorgen ervoor dat er na maandafsluiting geen acties nodig hoeven te zijn omdat deze aan de voorhand al opgelost kunnen worden.\n\nVoor de financiële audits wordt actief gebruikgemaakt van controles om afwijkingen tijdig te signaleren en te corrigeren. Op dit moment staan er nog 22 van de 72 foutmeldingen uit 2025 open. Het verder terugbrengen van dit aantal vergroot de betrouwbaarheid van de financiële verwerking.' }},
+      { id:5,  naam:'Licenties en gebruikers',      categorie:'Algemeen',       actief:true, score:'Goed',  expanded:false, teksten:{ Niet:'', Optim:'', Goed:'Uit de scan blijkt dat er vrijwel geen onnodig gebruik wordt gemaakt van de licenties. Het enige risico is het huidig aantal beschikbare InSite-gebruikers welke bijna op 0 staat. Op basis van de verwachte jaarlijkse in- en uitstroom kan worden bekeken in hoeverre dit daadwerkelijk een risico betreft en een aanpassing in de licentie nodig zal zijn.\n\nEr lijkt geen gebruik te worden gemaakt van meewerkgebruikers. Indien FCCA van mening is dat deze niet gebruikt worden, dan kan de licentie verlaagd worden voor een kleine maandelijkse kostenbesparing.' }},
+      { id:6,  naam:'Activa & Debiteuren',           categorie:'Financieel',     actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Volledige implementatie en optimalisatie van de Activa & Debiteuren-modules is een kans om de financiële processen beter te ondersteunen.', Optim:'', Goed:'' }},
+      { id:7,  naam:'Opschonen instellingen',        categorie:'Algemeen',       actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'Correct inrichten van foutieve basisinstellingen rondom autorisaties en algemeen documentbeheer.', Goed:'' }},
+      { id:8,  naam:'Contractmanagement',            categorie:'Ordermanagement',actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'Optimaliseren van de workflow voor contractbeheer inclusief automatische berichtgeving en notificaties.', Goed:'' }},
+      { id:9,  naam:'Documentbeheer',                categorie:'Algemeen',       actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Herstructurering van de huidige inrichting die momenteel niet naar behoren functioneert.', Optim:'', Goed:'' }},
+      { id:10, naam:'Factuurverwerking',             categorie:'Financieel',     actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'Integratie of optimalisatie van "Image Capture" voor inkomende facturen (behoud vanuit de Exact-werkwijze).', Goed:'' }},
+      { id:11, naam:'CBA Rapportages',               categorie:'Financieel',     actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Automatiseren van de twee verplichte maandelijkse rapportages voor de Centrale Bank Aruba (deadline elke 15e van de maand). Dit reduceert handmatig werk en vermindert het risico op te late indiening.', Optim:'', Goed:'' }},
+      { id:12, naam:'Business Intelligence / Power BI', categorie:'Algemeen',   actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Als test is door AFAS Power BI geactiveerd en neergezet, maar is er verder nog niks mee gedaan. Met de standaard templates van AFAS kunnen er dashboards gemaakt worden die flexibel en naar eigen wens aan te passen zijn.\n\nVanuit ProcesBouwers kunnen wij begeleiden in de overstap en FCCA stap voor stap meenemen in hoe dashboards gebouwd en onderhouden worden. Het voordeel hiervan is dat de kennis intern in huis blijft en rapportages in de toekomst zelfstandig geoptimaliseerd kunnen worden.', Optim:'', Goed:'' }},
+      { id:13, naam:'Condor Koppeling',              categorie:'Projecten',      actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Realiseren van een koppeling tussen de vastgoedsoftware (Condor) en AFAS.', Optim:'', Goed:'' }},
+      { id:14, naam:'DMS Migratie',                  categorie:'Projecten',      actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'Onderzoeken van de overstap van de in-house debiteurensoftware (DMS) naar Condor of AFAS.', Goed:'' }},
+      { id:15, naam:'InSite opmaak',                 categorie:'Algemeen',       actief:true, score:'Goed',  expanded:false, teksten:{ Niet:'', Optim:'', Goed:'De opmaak van InSite is grotendeels AFAS standaard opgemaakt met enkel een afwijking in logo. Het standaard thema AFAS Open 2021 – Blauw/geel is in gebruik genomen.\n\nVanuit Best Practice is het advies om meer gebruik te maken van paginaonderdelen om knoppen en overzichten beter uit te lichten. Voor eindgebruikers is het belangrijk dat InSite overzichtelijk is en de juiste informatie gepresenteerd wordt.' }},
+      { id:16, naam:'SCORFI-Workflows',              categorie:'HRM',            actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Binnen de organisatie wordt beperkt gebruikgemaakt van de HRM-module en bijbehorende workflows in AFAS. Er zijn geen SCORFI-workflows ingericht en wijzigingen worden voornamelijk mondeling of per mail besproken en daarna handmatig in AFAS verwerkt. Hierdoor ontbreekt logging op de wijzigingen.\n\nDoor het inrichten van de SCORFI-workflows kunnen wijzigingen via InSite worden doorgegeven met invoer bij de bron. Tevens biedt AFAS de mogelijkheid om via InSite direct documenten te genereren en digitaal te ondertekenen.', Optim:'', Goed:'' }},
+      { id:17, naam:'Declaraties',                   categorie:'HRM',            actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Momenteel zijn er geen workflows ingericht voor het declareren van zakelijke kosten. Door gebruik te maken van de declaratiemodule kunnen medewerkers hun kosten zelf indienen via AFAS InSite of de Pocket-app. Deze declaraties kunnen vervolgens via een workflow gecontroleerd en verwerkt worden en automatisch via de salarisadministratie worden uitbetaald. Dit vermindert handmatige handelingen, verkleint de foutkans en verhoogt het gebruiksgemak voor medewerkers.', Optim:'', Goed:'' }},
+      { id:18, naam:'Verzuim',                       categorie:'HRM',            actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Waar nog niet naar gekeken is zijn eventuele kansen in het digitaliseren van re-integratieprocessen rondom verzuim wegens andere wet- en regelgeving in Aruba ten opzichte van Nederland.', Optim:'', Goed:'' }},
+      { id:19, naam:'Bewaartermijnen',               categorie:'HRM',            actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Op basis van een steekproef controle is geconstateerd dat er nog geen bewaartermijnen in AFAS zijn ingericht en hierdoor geen automatische dossieropschoning plaatsvindt. Persoonsgegevens worden hierdoor langer bewaard dan wettelijk toegestaan is.\n\nDoor per dossieritem of workflow een automatische bewaartermijn in te stellen, borgt FCCA dat er proactief wordt voldaan aan de Arubaanse Landsverordening Persoonsregistraties (Lpr).', Optim:'', Goed:'' }},
+      { id:20, naam:'Control Framework',             categorie:'Algemeen',       actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Sinds kort is het Control Framework als nieuwe functionaliteit beschikbaar binnen AFAS. Dit framework bevat al standaard geïntegreerde templates voor de belangrijkste normeringen en certificeringen, zoals NEN 4400-1, ISO 27001:2022 en ISO 9001:2015.\n\nDoor het Control Framework in te zetten, is de organisatie gestructureerd en geautomatiseerd voorbereid op audits. Dit geeft het bestuur zekerheid over compliancy en haalt direct een zware, handmatige verantwoordingslast weg bij het huidige team.', Optim:'', Goed:'' }},
+      { id:21, naam:'AI in AFAS (Jonas)',            categorie:'Algemeen',       actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'De nieuwe AI-functionaliteit van AFAS (Jonas) biedt veel mogelijkheden:\n• Bonnetjes herkennen in AFAS Pocket voor declaraties\n• AI-stappen tussen workflows voor vragen over arbeidsvoorwaarden\n• Documenten uitlezen en reactie geven\n• Spraaktaak omzetten naar tekst (handig voor 1-op-1 gesprekken of college)', Optim:'', Goed:'' }}
+    ]
+  };
+
+  const SCORES = [
+    { key: 'Niet',  label: 'Niet in gebruik',    css: 'niet',  color: '#c53030', bg: '#fff5f5', border: '#fc8181' },
+    { key: 'Optim', label: 'Optimalisatiekansen', css: 'optim', color: '#b7791f', bg: '#fffbeb', border: '#f6ad55' },
+    { key: 'Goed',  label: 'Goed in gebruik',     css: 'goed',  color: '#276749', bg: '#f0fff4', border: '#68d391' },
+  ];
+  const SCORE_MAP = Object.fromEntries(SCORES.map(s => [s.key, s]));
+  const EMOJIS    = { Niet: '🚫', Optim: '🔧', Goed: '✅' };
+  const PB_LOGO_B64 = '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';
+  const CATEGORIES = ['Algemeen','CRM','HRM','Financieel','Ordermanagement','Abonnementen','Projecten','Fiscaal'];
+
+  let rows          = [];
+  let counter       = 0;
+  let headerTekst   = '';
+  let docHeaderTekst = '';
+  let docFooterTekst = '';
+  let activeCats    = new Set(CATEGORIES); // alle categorieën zichtbaar
+  const STORAGE_KEY  = 'omgevingsscan_data';
+  const LIBRARY_KEY  = 'omgevingsscan_library';
+
+  function emptyTeksten() {
+    return Object.fromEntries(SCORES.map(s => [s.key, '']));
+  }
+
+  // ── Opslaan & laden ──
+  function saveData() {
+    const payload = {
+      seedVersion: 1,
+      counter, headerTekst, docHeaderTekst, docFooterTekst,
+      activeCats: [...activeCats],
+      rows: rows.map(r => ({ ...r, expanded: false }))
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  }
+
+  function loadData() {
+    try {
+      const raw  = localStorage.getItem(STORAGE_KEY);
+      const p    = (raw && JSON.parse(raw).seedVersion >= 1) ? JSON.parse(raw) : SEED_DATA;
+      counter        = p.counter        || 0;
+      headerTekst    = p.headerTekst    || '';
+      docHeaderTekst = p.docHeaderTekst || '';
+      docFooterTekst = p.docFooterTekst || '';
+      activeCats     = new Set(p.activeCats && p.activeCats.length ? p.activeCats : CATEGORIES);
+      rows           = (p.rows || []).map(r => {
+        const row = { categorie: 'Algemeen', ...r, expanded: false };
+        // Migreer oud enkelvoudig afbeelding-veld naar array
+        if (!Array.isArray(row.afbeeldingen)) {
+          row.afbeeldingen = row.afbeelding ? [row.afbeelding] : [];
+        }
+        return row;
+      });
+    } catch(e) {
+      // corrupt data → seed
+      counter = SEED_DATA.counter; headerTekst = SEED_DATA.headerTekst;
+      docHeaderTekst = SEED_DATA.docHeaderTekst; docFooterTekst = SEED_DATA.docFooterTekst;
+      activeCats = new Set(CATEGORIES); rows = SEED_DATA.rows.map(r => ({...r, expanded:false}));
+    }
+
+    const ht = document.getElementById('header-tekst');
+    const dh = document.getElementById('doc-header-tekst');
+    const df = document.getElementById('doc-footer-tekst');
+    if (ht) ht.value = headerTekst;
+    if (dh) dh.value = docHeaderTekst;
+    if (df) df.value = docFooterTekst;
+
+    renderCatFilter();
+    renderTable();
+  }
+
+  // ── Update functies ──
+  function updateHeaderTekst(v)     { headerTekst    = v; debounceSave(); }
+  function updateDocTekst(part, v)  {
+    if (part === 'header') docHeaderTekst = v;
+    else                   docFooterTekst = v;
+    debounceSave();
+  }
+
+  let saveTimer = null;
+  function debounceSave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 400); }
+
+  // ── Categorie filter ──
+  function renderCatFilter() {
+    const wrap = document.getElementById('cat-filter-chips');
+    if (!wrap) return;
+    wrap.innerHTML = CATEGORIES.map(c => {
+      const checked = activeCats.has(c);
+      return `<label class="cat-chip${checked ? ' checked' : ''}">
+        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleCatFilter('${c}', this)"/>
+        ${c}
+      </label>`;
+    }).join('');
+  }
+
+  function toggleCatFilter(cat, el) {
+    if (el.checked) activeCats.add(cat);
+    else            activeCats.delete(cat);
+    // update chip style
+    el.closest('.cat-chip').classList.toggle('checked', el.checked);
+    applyFilter();
+    saveData();
+  }
+
+  function applyFilter() {
+    for (const r of rows) {
+      const visible  = activeCats.has(r.categorie);
+      const mainRow  = document.getElementById(`row-${r.id}`);
+      const detRow   = document.getElementById(`detail-${r.id}`);
+      if (mainRow) mainRow.classList.toggle('hidden', !visible);
+      if (detRow  && !visible) detRow.style.display = 'none';
+    }
+    updateBadges();
+  }
+
+  // ── Rijen beheer ──
+  function addRow() {
+    const id = ++counter;
+    rows.push({ id, naam: `Variabele ${id}`, categorie: 'Algemeen', score: null, teksten: emptyTeksten(), afbeeldingen: [], quickwin: false, expanded: false });
+    renderTable();
+    saveData();
+    setTimeout(() => { const el = document.getElementById(`naam-${id}`); if (el) { el.focus(); el.select(); } }, 50);
+  }
+
+  function removeRow(id) {
+    rows = rows.filter(r => r.id !== id);
+    renderTable();
+    saveData();
+  }
+
+  function toggleActive(id) {
+    const r = rows.find(r => r.id === id);
+    if (r) r.actief = !r.actief;
+    updateBadges();
+    updateGenerateBtn();
+    const tr = document.getElementById(`row-${id}`);
+    if (tr) tr.classList.toggle('is-active', r.actief);
+    saveData();
+  }
+
+  function setScore(id, key) {
+    const r = rows.find(r => r.id === id);
+    if (!r) return;
+    r.score = (r.score === key) ? null : key;
+    const el = document.getElementById(`score-${id}`);
+    if (el) el.innerHTML = scoreHTML(r);
+    updateGenerateBtn();
+    saveData();
+  }
+
+  function toggleExpand(id) {
+    const r = rows.find(r => r.id === id);
+    if (!r) return;
+    r.expanded = !r.expanded;
+    const btn  = document.getElementById(`expand-btn-${id}`);
+    const det  = document.getElementById(`detail-${id}`);
+    if (btn) { btn.classList.toggle('open', r.expanded); btn.textContent = r.expanded ? '▲ Sluiten' : '▼ Teksten'; updateExpandBtnStyle(r.id); }
+    if (det) det.style.display = r.expanded ? 'table-row' : 'none';
+  }
+
+  function updateTekst(id, key, value) {
+    const r = rows.find(r => r.id === id);
+    if (r) { r.teksten[key] = value; updateExpandBtnStyle(id); debounceSave(); }
+  }
+
+  function updateNaam(id, value) {
+    const r = rows.find(r => r.id === id);
+    if (r) { r.naam = value; debounceSave(); }
+  }
+
+  function updateCategorie(id, value) {
+    const r = rows.find(r => r.id === id);
+    if (!r) return;
+    r.categorie = value;
+    // direct filter toepassen
+    const visible = activeCats.has(value);
+    const mainRow = document.getElementById(`row-${id}`);
+    const detRow  = document.getElementById(`detail-${id}`);
+    if (mainRow) mainRow.classList.toggle('hidden', !visible);
+    if (detRow && !visible) detRow.style.display = 'none';
+    updateBadges();
+    saveData();
+  }
+
+  function toggleQuickwin(id) {
+    const r = rows.find(r => r.id === id);
+    if (r) { r.quickwin = !r.quickwin; saveData(); }
+    const cb = document.getElementById(`qw-${id}`);
+    if (cb) cb.checked = r.quickwin;
+  }
+
+  // ── HTML helpers ──
+  function scoreHTML(r) {
+    return SCORES.map(s => {
+      const sel = r.score === s.key ? ' selected' : '';
+      return `<span class="score-pill ${s.css}${sel}" onclick="setScore(${r.id},'${s.key}')">${s.label}</span>`;
+    }).join('');
+  }
+
+  function detailHTML(r) {
+    const imgs = Array.isArray(r.afbeeldingen) ? r.afbeeldingen : [];
+    const thumbsHtml = imgs.length > 0
+      ? imgs.map((src, idx) => `
+          <div style="display:flex;align-items:center;gap:10px;padding:7px 10px;border:1.5px solid #c4cfe8;border-radius:8px;background:white;margin-bottom:6px;">
+            <img src="${src}" style="height:52px;max-width:100px;object-fit:contain;border-radius:5px;border:1px solid #e2e8f0;flex-shrink:0;" alt="afb ${idx+1}"/>
+            <span style="flex:1;font-size:0.79rem;color:#4a5568;">Afbeelding ${idx+1}</span>
+            <button class="img-remove-btn" onclick="removeAfbeelding(${r.id},${idx})">✕</button>
+          </div>`).join('')
+      : '';
+    return SCORES.map(s => `
+      <div class="field-group ${s.css}">
+        <label>${EMOJIS[s.key]} ${s.label}</label>
+        <textarea placeholder="Omschrijving voor '${s.label}'…"
+          oninput="updateTekst(${r.id},'${s.key}',this.value)">${escHtml(r.teksten[s.key])}</textarea>
+      </div>`).join('') + `
+    <div class="img-upload-row">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <label class="img-upload-label" style="margin-bottom:0;">📎 Afbeeldingen${imgs.length > 0 ? ` (${imgs.length})` : ''} — worden getoond in document</label>
+        <button class="btn-primary" onclick="bulkImportImages()" title="Koppel meerdere afbeeldingen automatisch op naam" style="font-size:0.75rem;padding:5px 12px;border-radius:50px;">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          Bulk koppelen
+        </button>
+      </div>
+      ${thumbsHtml}
+      <div class="img-upload-area" onclick="triggerImgUpload(${r.id})" style="margin-top:${imgs.length>0?'4px':'0'}">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="opacity:0.45;flex-shrink:0">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <span class="img-upload-placeholder">${imgs.length > 0 ? '+ Nog een afbeelding toevoegen' : 'Klik om een afbeelding te koppelen (PNG, JPG)'}</span>
+      </div>
+      <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" id="img-input-${r.id}" style="display:none" onchange="handleImgUpload(${r.id}, this)"/>
+    </div>`;
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('tbody');
+    if (rows.length === 0) {
+      tbody.innerHTML = `<tr id="empty-row"><td colspan="6">
+        <div class="empty-state">
+          <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/>
+            <line x1="9" y1="3" x2="9" y2="21"/>
+          </svg>
+          <p>Geen rijen. Klik op <strong>+ Rij toevoegen</strong> om te starten.</p>
+        </div>
+      </td></tr>`;
+      updateBadges(); updateGenerateBtn(); return;
+    }
+
+    // Sorteer op categorie (CATEGORIES volgorde), daarna op originele volgorde binnen categorie
+    const sortedRows = [...rows].sort((a, b) => {
+      const ai = CATEGORIES.indexOf(a.categorie);
+      const bi = CATEGORIES.indexOf(b.categorie);
+      const av = ai === -1 ? 999 : ai;
+      const bv = bi === -1 ? 999 : bi;
+      return av - bv;
+    });
+
+    let html = '';
+    for (const r of sortedRows) {
+      const hidden = !activeCats.has(r.categorie) ? ' hidden' : '';
+      html += `
+      <tr class="row-main${hidden}" id="row-${r.id}">
+        <td><input class="naam-input" id="naam-${r.id}" type="text" value="${escHtml(r.naam)}"
+          oninput="updateNaam(${r.id}, this.value)" placeholder="Naam variabele…"/></td>
+        <td><select class="cat-select" onchange="updateCategorie(${r.id}, this.value)">
+          ${CATEGORIES.map(c => `<option value="${c}"${r.categorie===c?' selected':''}>${c}</option>`).join('')}
+        </select></td>
+        <td><div class="score-group" id="score-${r.id}">${scoreHTML(r)}</div></td>
+        <td style="text-align:center;"><input type="checkbox" id="qw-${r.id}" ${r.quickwin?'checked':''} onchange="toggleQuickwin(${r.id})" title="Quick Win" style="width:18px;height:18px;cursor:pointer;accent-color:#3251c4;"/></td>
+        <td><button class="btn-expand${r.expanded?' open':''}${hasIncompleteTeksten(r)?' incomplete':''}" id="expand-btn-${r.id}"
+          onclick="toggleExpand(${r.id})">${r.expanded?'▲ Sluiten':'▼ Teksten'}</button></td>
+        <td><button class="btn-danger" onclick="removeRow(${r.id})" title="Verwijderen">✕</button></td>
+      </tr>
+      <tr class="row-detail${hidden}" id="detail-${r.id}" style="display:${r.expanded&&!hidden?'table-row':'none'}">
+        <td colspan="6" style="padding:0;">
+          <div class="detail-inner">${detailHTML(r)}</div>
+        </td>
+      </tr>`;
+    }
+    tbody.innerHTML = html;
+    updateBadges();
+    updateGenerateBtn();
+  }
+
+  function updateBadges() {
+    // Badges verwijderd — enkel nog generate-knop bijwerken
+    updateGenerateBtn();
+  }
+
+  function updateGenerateBtn() {
+    document.getElementById('btn-generate').disabled =
+      rows.filter(r => r.score).length === 0;
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Check of alle tekstvelden gevuld zijn voor een rij
+  function hasIncompleteTeksten(r) {
+    for (const s of SCORES) {
+      if (!r.teksten[s.key] || r.teksten[s.key].trim() === '') return true;
+    }
+    return false;
+  }
+
+  // Pas oranje kleur toe op expand-knop als teksten incompleet zijn
+  function updateExpandBtnStyle(id) {
+    const r = rows.find(r => r.id === id);
+    const btn = document.getElementById(`expand-btn-${id}`);
+    if (!r || !btn) return;
+    btn.classList.toggle('incomplete', hasIncompleteTeksten(r));
+  }
+
+  // ── Afbeelding per rij ──
+  function triggerImgUpload(id) {
+    const inp = document.getElementById(`img-input-${id}`);
+    if (inp) inp.click();
+  }
+
+  function handleImgUpload(id, input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const r = rows.find(r => r.id === id);
+      if (!r) return;
+      if (!Array.isArray(r.afbeeldingen)) r.afbeeldingen = [];
+      r.afbeeldingen.push(e.target.result);
+      const detDiv = document.querySelector(`#detail-${id} .detail-inner`);
+      if (detDiv) detDiv.innerHTML = detailHTML(r);
+      debounceSave();
+      showToast('✅ Afbeelding toegevoegd!');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function bulkImportImages() {
+    const inp = document.getElementById('bulk-img-input');
+    if (inp) { inp.value = ''; inp.click(); }
+  }
+
+  function normName(str) {
+    // Verwijder nummers, spaties, speciale tekens — alleen letters die overblijven
+    return String(str).toLowerCase().replace(/[\d\s\-_.,!?()\[\]{}'"\/:;\\]/g, '');
+  }
+
+  let pendingUnmatched = []; // { src, baseName }
+
+  function handleBulkImgImport(input) {
+    const files = Array.from(input.files);
+    if (!files.length) return;
+
+    // Lees alle bestanden tegelijk als base64
+    let done = 0;
+    const fileData = new Array(files.length);
+    files.forEach((file, i) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        fileData[i] = { file, src: e.target.result };
+        if (++done === files.length) processFileData(fileData);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function processFileData(fileData) {
+    const matched   = [];
+    const unmatched = [];
+
+    for (const { file, src } of fileData) {
+      const baseName = file.name.replace(/\.[^.]+$/, '');
+      const row = rows.find(r => normName(r.naam) === normName(baseName));
+      if (row) matched.push({ row, src });
+      else     unmatched.push({ src, baseName });
+    }
+
+    // Auto-koppel gevonden matches
+    for (const { row, src } of matched) {
+      if (!Array.isArray(row.afbeeldingen)) row.afbeeldingen = [];
+      row.afbeeldingen.push(src);
+    }
+    if (matched.length > 0) { renderTable(); debounceSave(); }
+
+    if (unmatched.length > 0) {
+      pendingUnmatched = unmatched;
+      showUnmatchedModal(unmatched);
+      if (matched.length > 0)
+        showToast(`✅ ${matched.length} gekoppeld — ${unmatched.length} niet herkend (zie popup)`);
+    } else {
+      showToast(`✅ ${matched.length} afbeelding${matched.length!==1?'en':''} automatisch gekoppeld!`);
+    }
+  }
+
+  function showUnmatchedModal(unmatched) {
+    const list = document.getElementById('unmatch-list');
+    list.innerHTML = unmatched.map((u, i) => `
+      <div class="unmatch-item">
+        <img class="unmatch-thumb" src="${u.src}" alt="${escHtml(u.baseName)}"/>
+        <span class="unmatch-name" title="${escHtml(u.baseName)}">${escHtml(u.baseName)}</span>
+        <select class="unmatch-select" id="unmatch-sel-${i}">
+          <option value="">— Overslaan —</option>
+          ${rows.map(r => `<option value="${r.id}">${escHtml(r.naam)}</option>`).join('')}
+        </select>
+      </div>`).join('');
+    document.getElementById('unmatch-modal').classList.add('open');
+  }
+
+  function closeUnmatchedModal() {
+    document.getElementById('unmatch-modal').classList.remove('open');
+    pendingUnmatched = [];
+  }
+
+  function saveUnmatchedMappings() {
+    let count = 0;
+    pendingUnmatched.forEach((u, i) => {
+      const sel = document.getElementById(`unmatch-sel-${i}`);
+      if (!sel || !sel.value) return;
+      const row = rows.find(r => r.id === parseInt(sel.value));
+      if (!row) return;
+      if (!Array.isArray(row.afbeeldingen)) row.afbeeldingen = [];
+      row.afbeeldingen.push(u.src);
+      count++;
+    });
+    closeUnmatchedModal();
+    if (count > 0) { renderTable(); debounceSave(); showToast(`✅ ${count} afbeelding${count!==1?'en':''} handmatig gekoppeld!`); }
+  }
+
+  function removeAfbeelding(id, idx) {
+    const r = rows.find(r => r.id === id);
+    if (!r || !Array.isArray(r.afbeeldingen)) return;
+    r.afbeeldingen.splice(idx, 1);
+    const detDiv = document.querySelector(`#detail-${id} .detail-inner`);
+    if (detDiv) detDiv.innerHTML = detailHTML(r);
+    debounceSave();
+    showToast('🗑️ Afbeelding verwijderd.');
+  }
+
+  // Vervang [klant] overal in teksten door de ingevulde Klant/Project naam
+  function replaceKlant(text) {
+    if (!text) return text;
+    const klant = headerTekst || '[klant]';
+    return text.replace(/\[klant\]/gi, klant);
+  }
+
+  // ── Preview modal ──
+  function buildCatSections(activeRows, forHtml) {
+    // Groepeer op categorie (volgorde CATEGORIES), daarna overige
+    const catOrder = [...CATEGORIES, ...activeRows.map(r=>r.categorie).filter(c=>!CATEGORIES.includes(c)).filter((c,i,a)=>a.indexOf(c)===i)];
+    let out = '';
+    for (const cat of catOrder) {
+      const catRows = activeRows.filter(r => r.categorie === cat);
+      if (catRows.length === 0) continue;
+      out += forHtml
+        ? `<div class="doc-cat-section"><div class="doc-cat-section-header"><span class="doc-cat-section-title">${escHtml(cat)}</span><span class="doc-cat-section-count">${catRows.length} item${catRows.length!==1?'s':''}</span></div>`
+        : `<h2 style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:16pt;color:#23296C;padding-bottom:6pt;margin:24pt 0 10pt;">${escHtml(cat)}</h2>`;
+      catRows.forEach((r, idx) => {
+        const s     = SCORE_MAP[r.score];
+        const tekst = replaceKlant(r.teksten[r.score] || '');
+        const imgs = Array.isArray(r.afbeeldingen) ? r.afbeeldingen : [];
+        if (forHtml) {
+          const imgsHtml = imgs.map(src =>
+            `<div style="margin-top:10px;"><img src="${src}" style="max-width:100%;max-height:320px;border-radius:7px;border:1px solid #e2e8f0;display:block;" alt=""/></div>`
+          ).join('');
+          out += `
+            <div class="doc-section">
+              <div class="doc-var-title"><span class="doc-item-num">${idx+1}</span>${escHtml(r.naam)}</div>
+              <div class="doc-score-badge" style="color:${s.color};background:${s.bg};border-color:${s.border};">${EMOJIS[s.key]} ${s.label}</div>${r.quickwin ? '<span style="display:inline-block;font-size:0.76rem;font-weight:700;padding:3px 11px;border-radius:99px;border:1.5px solid #3251c4;color:#3251c4;background:#eaedfa;margin-left:8px;vertical-align:middle;">⚡ Quick Win</span>' : ''}
+              <div class="doc-var-text">${escHtml(tekst).replace(/\n/g,'<br/>') || '<em style="color:#a0aec0">Geen tekst ingevuld</em>'}</div>
+              ${imgsHtml}
+            </div><hr class="doc-divider"/>`;
+        } else {
+          const imgsWordHtml = imgs.map(src =>
+            `<p style="margin:4pt 0 10pt;"><img src="${src}" style="max-width:14cm;border:1pt solid #e2e8f0;"/></p>`
+          ).join('');
+          out += `
+            <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:9pt;color:#6b7280;margin:14pt 0 2pt;">${idx+1}.</p>
+            <h3 style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:12pt;color:#23296C;margin:0 0 5pt;">${escHtml(r.naam)}</h3>
+            <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:9pt;color:${s.color};background:${s.bg};border:1pt solid ${s.border};padding:3pt 10pt;border-radius:4pt;display:inline-block;margin-bottom:7pt;font-weight:bold;">${EMOJIS[s.key]} ${s.label}</p>${r.quickwin ? '<p style="font-family:\'Roboto\',\'Segoe UI\',Calibri,sans-serif;font-size:9pt;color:#23296C;background:#eaedfa;border:1pt solid #23296C;padding:3pt 10pt;border-radius:4pt;display:inline-block;margin-bottom:7pt;margin-left:6pt;font-weight:bold;">⚡ Quick Win</p>' : ''}
+            <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:11pt;color:#2d3748;line-height:1.65;margin:4pt 0 ${imgs.length?'6pt':'14pt'};">${escHtml(tekst).replace(/\n/g,'<br/>')}</p>
+            ${imgsWordHtml}`;
+        }
+      });
+      if (forHtml) out += `</div>`;
+    }
+    return out;
+  }
+
+  function showPreview() {
+    const activeRows = rows.filter(r => r.score);
+    if (activeRows.length === 0) { showToast('Geen actieve rijen met score geselecteerd.'); return; }
+
+    const now     = new Date();
+    const dateStr = now.toLocaleDateString('nl-NL', {year:'numeric',month:'long',day:'numeric'});
+    const titel   = headerTekst ? `Omgevingsscan — ${escHtml(headerTekst)}` : 'Omgevingsscan';
+    const headerText = replaceKlant(docHeaderTekst);
+    const footerText = replaceKlant(docFooterTekst);
+
+    document.getElementById('doc-paper-content').innerHTML = `
+      <div style="margin-bottom:18px;"><img src="Logo PB blauw.png" alt="Proces Bouwers" style="height:44px;width:auto;"/></div>
+      <div class="doc-title-bar">
+        <div class="doc-main-title">${titel}</div>
+        <div class="doc-subtitle">De tool waarmee Proces Bouwers nederland productiever maakt</div>
+        <div class="doc-meta">Aangemaakt op ${dateStr} &nbsp;·&nbsp; ${activeRows.length} variabele${activeRows.length!==1?'n':''}</div>
+      </div>
+      ${headerText ? `<div class="doc-intro">${escHtml(headerText).replace(/\n/g,'<br/>')}</div>` : ''}
+      ${buildCatSections(activeRows, true)}
+      ${footerText ? `<div class="doc-outro">${escHtml(footerText).replace(/\n/g,'<br/>')}</div>` : ''}
+      <div class="doc-footer-line">Meer grip op AFAS? Ontdek onze inzichten via procesbouwers.nl</div>`;
+
+    document.getElementById('preview-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePreview() {
+    document.getElementById('preview-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closePreviewOnBackdrop(e) {
+    if (e.target === document.getElementById('preview-modal')) closePreview();
+  }
+
+  // ── Document downloaden (vanuit preview) ──
+  function downloadDoc() {
+    const activeRows = rows.filter(r => r.score);
+    if (activeRows.length === 0) return;
+
+    const now     = new Date();
+    const dateStr = now.toLocaleDateString('nl-NL', {year:'numeric',month:'long',day:'numeric'});
+    const headerText = replaceKlant(docHeaderTekst);
+    const footerText = replaceKlant(docFooterTekst);
+    const headerBlok = headerText ? `<p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:11pt;color:#2d3748;line-height:1.65;margin:0 0 22pt;">${escHtml(headerText).replace(/\n/g,'<br/>')}</p>` : '';
+    const footerBlok = footerText ? `<p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:11pt;color:#2d3748;line-height:1.65;margin:28pt 0 0;">${escHtml(footerText).replace(/\n/g,'<br/>')}</p>` : '';
+
+    // Collect all data-URI images and replace with cid: references for MHTML
+    const imgParts = [];
+    let imgCounter = 0;
+
+    // Add PB Logo as first image part
+    const logoContentType = 'image/png';
+    const logoCid = 'pb-logo@omgevingsscan';
+    imgParts.push({ cid: logoCid, contentType: logoContentType, base64: PB_LOGO_B64 });
+
+    // Build Word content with cid references for the logo
+    let bodyContent = buildCatSections(activeRows, false);
+
+    // Extract data-URI images from body content and replace with cid references
+    bodyContent = bodyContent.replace(/src="data:([^;]+);base64,([^"]+)"/g, function(match, mime, b64) {
+      imgCounter++;
+      const cid = 'img' + imgCounter + '@omgevingsscan';
+      imgParts.push({ cid: cid, contentType: mime, base64: b64 });
+      return 'src="cid:' + cid + '"';
+    });
+
+    const docHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office'
+      xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><meta charset='utf-8'/><title>Omgevingsscan</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
+<style>@page{size:A4;margin:2.5cm 2.5cm 2.5cm 2.5cm;}body{font-family:'Roboto','Segoe UI',Calibri,sans-serif;}</style>
+</head>
+<body>
+  <p style="margin:0 0 14pt;"><img src="cid:${logoCid}" style="height:40pt;width:auto;" alt="Proces Bouwers"/></p>
+  <div style="border-bottom:3pt solid #23296C;padding-bottom:14pt;margin-bottom:20pt;">
+    <h1 style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:22pt;color:#23296C;font-weight:bold;margin:0 0 4pt;">
+      Omgevingsscan${headerTekst?' — '+escHtml(headerTekst):''}
+    </h1>
+    <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:10pt;color:#718096;margin:0 0 2pt;">De tool waarmee Proces Bouwers nederland productiever maakt</p>
+    <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:9pt;color:#a0aec0;margin:0;">Aangemaakt op ${dateStr} &nbsp;·&nbsp; ${activeRows.length} variabele${activeRows.length!==1?'n':''}</p>
+  </div>
+  ${headerBlok}
+  ${bodyContent}
+  ${footerBlok}
+  <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:8pt;color:#a0aec0;margin-top:36pt;text-align:center;">Meer grip op AFAS? Ontdek onze inzichten via procesbouwers.nl</p>
+</body></html>`;
+
+    // Build MHTML document with embedded images
+    const boundary = '----=_NextPart_' + Date.now().toString(36);
+    let mhtml = 'MIME-Version: 1.0\r\n';
+    mhtml += 'Content-Type: multipart/related; boundary="' + boundary + '"\r\n\r\n';
+
+    // HTML part
+    mhtml += '--' + boundary + '\r\n';
+    mhtml += 'Content-Type: text/html; charset="utf-8"\r\n';
+    mhtml += 'Content-Transfer-Encoding: quoted-printable\r\n\r\n';
+    mhtml += docHtml + '\r\n\r\n';
+
+    // Image parts
+    for (const img of imgParts) {
+      mhtml += '--' + boundary + '\r\n';
+      mhtml += 'Content-Type: ' + img.contentType + '\r\n';
+      mhtml += 'Content-Transfer-Encoding: base64\r\n';
+      mhtml += 'Content-ID: <' + img.cid + '>\r\n\r\n';
+      // Split base64 into 76-char lines
+      const b64 = img.base64;
+      for (let i = 0; i < b64.length; i += 76) {
+        mhtml += b64.slice(i, i + 76) + '\r\n';
+      }
+      mhtml += '\r\n';
+    }
+
+    mhtml += '--' + boundary + '--\r\n';
+
+    const blob = new Blob([mhtml], { type: 'application/msword' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = `omgevingsscan-${now.toISOString().slice(0,10)}.doc`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(`✅ Document gedownload met ${activeRows.length} variabele${activeRows.length!==1?'n':''}!`);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // ── Bibliotheek ──
+  function getLibrary() {
+    try { return JSON.parse(localStorage.getItem(LIBRARY_KEY) || '[]'); }
+    catch(e) { return []; }
+  }
+
+  function saveLibrary(lib) {
+    localStorage.setItem(LIBRARY_KEY, JSON.stringify(lib));
+  }
+
+  function openLibrary() {
+    renderLibList();
+    document.getElementById('lib-save-name').value = headerTekst ? headerTekst + ' — kopie' : '';
+    document.getElementById('lib-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLibrary() {
+    document.getElementById('lib-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeLibOnBackdrop(e) {
+    if (e.target === document.getElementById('lib-modal')) closeLibrary();
+  }
+
+  function saveToLibrary() {
+    const nameEl = document.getElementById('lib-save-name');
+    const name = nameEl.value.trim() || ('Scan ' + new Date().toLocaleDateString('nl-NL'));
+    const lib  = getLibrary();
+    const entry = {
+      id:       Date.now(),
+      name,
+      date:     new Date().toISOString(),
+      rowCount: rows.length,
+      activeCount: rows.filter(r => r.score).length,
+      data: {
+        seedVersion: 1, counter, headerTekst, docHeaderTekst, docFooterTekst,
+        activeCats: [...activeCats],
+        rows: rows.map(r => ({ ...r, expanded: false }))
+      }
+    };
+    lib.unshift(entry);
+    saveLibrary(lib);
+    nameEl.value = '';
+    renderLibList();
+    showToast(`📚 Scan "${name}" opgeslagen in bibliotheek!`);
+  }
+
+  function loadFromLibrary(id) {
+    const lib   = getLibrary();
+    const entry = lib.find(e => e.id === id);
+    if (!entry) return;
+    if (!confirm(`Wil je de scan "${entry.name}" laden? De huidige scan wordt overschreven.`)) return;
+    const p = entry.data;
+    counter        = p.counter        || 0;
+    headerTekst    = p.headerTekst    || '';
+    docHeaderTekst = p.docHeaderTekst || '';
+    docFooterTekst = p.docFooterTekst || '';
+    activeCats     = new Set(p.activeCats && p.activeCats.length ? p.activeCats : CATEGORIES);
+    rows           = (p.rows || []).map(r => ({ categorie: 'Algemeen', ...r, expanded: false }));
+    const ht = document.getElementById('header-tekst');
+    const dh = document.getElementById('doc-header-tekst');
+    const df = document.getElementById('doc-footer-tekst');
+    if (ht) ht.value = headerTekst;
+    if (dh) dh.value = docHeaderTekst;
+    if (df) df.value = docFooterTekst;
+    renderCatFilter();
+    renderTable();
+    saveData();
+    closeLibrary();
+    showToast(`✅ Scan "${entry.name}" geladen!`);
+  }
+
+  function exportFromLibrary(id) {
+    const lib   = getLibrary();
+    const entry = lib.find(e => e.id === id);
+    if (!entry) return;
+    const json  = JSON.stringify(entry.data, null, 2);
+    const blob  = new Blob([json], { type: 'application/json' });
+    const url   = URL.createObjectURL(blob);
+    const a     = document.createElement('a');
+    const safeName = entry.name.replace(/[^a-z0-9\-_\s]/gi, '').trim().replace(/\s+/g, '-') || 'scan';
+    a.href = url; a.download = `omgevingsscan-${safeName}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(`📥 "${entry.name}" geëxporteerd als JSON!`);
+  }
+
+  function deleteFromLibrary(id) {
+    const lib   = getLibrary();
+    const entry = lib.find(e => e.id === id);
+    if (!entry) return;
+    if (!confirm(`Verwijder scan "${entry.name}" uit de bibliotheek?`)) return;
+    saveLibrary(lib.filter(e => e.id !== id));
+    renderLibList();
+    showToast(`🗑️ Scan "${entry.name}" verwijderd.`);
+  }
+
+  function renderLibList() {
+    const lib  = getLibrary();
+    const el   = document.getElementById('lib-list');
+    if (!el) return;
+    if (lib.length === 0) {
+      el.innerHTML = `<div class="lib-empty">📭 Nog geen opgeslagen scans.<br/>Sla de huidige scan op via het veld hierboven.</div>`;
+      return;
+    }
+    el.innerHTML = lib.map(e => {
+      const d = new Date(e.date);
+      const dateStr = d.toLocaleDateString('nl-NL', {day:'numeric',month:'short',year:'numeric'}) + ' ' + d.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+      return `<div class="lib-item">
+        <div class="lib-item-icon">📄</div>
+        <div class="lib-item-info">
+          <div class="lib-item-name">${escHtml(e.name)}</div>
+          <div class="lib-item-meta">${dateStr} &nbsp;·&nbsp; ${e.rowCount} rijen${e.activeCount ? ', ' + e.activeCount + ' met score' : ''}</div>
+        </div>
+        <div class="lib-item-actions">
+          <button class="btn-lib-load" onclick="loadFromLibrary(${e.id})">Laden</button>
+          <button class="btn-lib-exp" title="Exporteer als JSON" onclick="exportFromLibrary(${e.id})">⬇</button>
+          <button class="btn-lib-del" onclick="deleteFromLibrary(${e.id})">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Landing page ──
+  let selectedTemplateId = null;
+
+  function renderLandingCats() {
+    const wrap = document.getElementById('landing-cat-chips');
+    if (!wrap) return;
+    wrap.innerHTML = CATEGORIES.map(c => {
+      const checked = activeCats.has(c);
+      return `<label class="cat-chip${checked ? ' checked' : ''}">
+        <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleLandingCat('${c}', this)"/>
+        ${c}
+      </label>`;
+    }).join('');
+  }
+
+  function toggleLandingCat(cat, el) {
+    if (el.checked) activeCats.add(cat);
+    else            activeCats.delete(cat);
+    el.closest('.cat-chip').classList.toggle('checked', el.checked);
+  }
+
+  function renderLandingTemplates() {
+    const lib = getLibrary();
+    const el  = document.getElementById('landing-tpl-list');
+    if (!el) return;
+    if (lib.length === 0) {
+      el.innerHTML = `<div class="tpl-empty">Geen opgeslagen templates gevonden.<br/>Je kunt een lege scan starten.</div>`;
+      return;
+    }
+    el.innerHTML = lib.map(e => {
+      const d = new Date(e.date);
+      const dateStr = d.toLocaleDateString('nl-NL', {day:'numeric',month:'short',year:'numeric'});
+      const sel = selectedTemplateId === e.id ? ' selected' : '';
+      return `<div class="tpl-card${sel}" onclick="selectTemplate(${e.id})">
+        <div class="tpl-icon">📄</div>
+        <div class="tpl-info">
+          <div class="tpl-name">${escHtml(e.name)}</div>
+          <div class="tpl-meta">${dateStr} · ${e.rowCount} rijen${e.activeCount ? ', ' + e.activeCount + ' met score' : ''}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function selectTemplate(id) {
+    selectedTemplateId = (selectedTemplateId === id) ? null : id;
+    renderLandingTemplates();
+  }
+
+  function goToMain() {
+    // Lees landing-velden
+    const klantVal = document.getElementById('landing-klant').value.trim();
+    const headerVal = document.getElementById('landing-header-tekst').value;
+    const footerVal = document.getElementById('landing-footer-tekst').value;
+
+    // Als een template is geselecteerd, laad die — anders blanco start
+    if (selectedTemplateId) {
+      const lib   = getLibrary();
+      const entry = lib.find(e => e.id === selectedTemplateId);
+      if (entry) {
+        const p = entry.data;
+        counter        = p.counter        || 0;
+        rows           = (p.rows || []).map(r => ({ categorie: 'Algemeen', ...r, expanded: false, score: null }));
+      }
+    } else {
+      // Blanco: geen regels, counter op 0
+      counter = 0;
+      rows    = [];
+    }
+
+    // Stel de landing-waarden in (overschrijft template-waarden)
+    headerTekst    = klantVal;
+    docHeaderTekst = headerVal;
+    docFooterTekst = footerVal;
+
+    // Sync met hidden inputs
+    const ht = document.getElementById('header-tekst');
+    const dh = document.getElementById('doc-header-tekst');
+    const df = document.getElementById('doc-footer-tekst');
+    if (ht) ht.value = headerTekst;
+    if (dh) dh.value = docHeaderTekst;
+    if (df) df.value = docFooterTekst;
+
+    renderCatFilter();
+    renderTable();
+    saveData();
+
+    // Toggle pagina's
+    document.getElementById('landing-page').classList.add('page-hidden');
+    document.getElementById('main-page').classList.remove('page-hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function goToLanding() {
+    // Sync huidige waarden naar landing-velden
+    document.getElementById('landing-klant').value = headerTekst;
+    document.getElementById('landing-header-tekst').value = docHeaderTekst;
+    document.getElementById('landing-footer-tekst').value = docFooterTekst;
+    selectedTemplateId = null;
+
+    renderLandingCats();
+    renderLandingTemplates();
+
+    // Toggle pagina's
+    document.getElementById('main-page').classList.add('page-hidden');
+    document.getElementById('landing-page').classList.remove('page-hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function initLanding() {
+    // Vul landing met huidige data
+    document.getElementById('landing-klant').value = headerTekst;
+    document.getElementById('landing-header-tekst').value = docHeaderTekst;
+    document.getElementById('landing-footer-tekst').value = docFooterTekst;
+    renderLandingCats();
+    renderLandingTemplates();
+  }
+
+  loadData();
+  initLanding();
+</script>
+</body>
+</html>
