@@ -4,10 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Omgevingsscan</title>
+  <script src="docx.umd.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    /* Font: Plus Jakarta Sans fallback to system fonts for offline use */
 
     :root {
       --navy:      #23296c;
@@ -38,7 +39,7 @@
     }
 
     body {
-      font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Segoe UI', 'Plus Jakarta Sans', system-ui, sans-serif;
       background: transparent;
       color: white;
       min-height: 100vh;
@@ -848,7 +849,7 @@
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
             <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
-          Downloaden als Word
+          Downloaden als .docx
         </button>
         <button class="btn-close-modal" onclick="closePreview()">✕ Sluiten</button>
       </div>
@@ -860,36 +861,14 @@
 <div id="toast"></div>
 
 <script>
-  // ── Voorbeelddata FCCA (AFAS) ──
+  // ── Standaard lege scan ──
   const SEED_DATA = {
-    counter: 21,
-    headerTekst: 'FCCA (AFAS)',
-    docHeaderTekst: 'Deze omgevingsscan is uitgevoerd om knelpunten en onbenutte kansen in de huidige AFAS-omgeving te identificeren en zichtbaar maken. Vanuit deze scan kunnen gerichte keuzes worden gemaakt over de vervolgstappen in de optimalisatie van AFAS en de impact bepalen van deze optimalisatie op de organisatie.\n\nHet uitgangspunt is structurele werkdrukverlaging voor de ondersteunende afdelingen (HR en Finance), het verhogen van efficiëntie en het versterken van de interne controle (compliance), zonder dat hiervoor een fulltime applicatiebeheerder nodig is.',
-    docFooterTekst: 'Deze omgevingsscan biedt een overzicht van huidige knelpunten en onbenutte kansen binnen de AFAS-omgeving. Op basis van deze informatie kan FCCA bepalen welke onderdelen zij in AFAS willen optimaliseren.\n\nAls FCCA naast de reeds besproken optimalisaties nog meer wil aanpakken, dan kan er in overleg worden gekeken waar de prioriteiten liggen en gezamenlijk een realistische planning voor 2026 worden opgesteld, rekening houdende met de inzet van ProcesBouwers en FCCA als organisatie.',
+    counter: 0,
+    headerTekst: '',
+    docHeaderTekst: '',
+    docFooterTekst: '',
     activeCats: ['Algemeen','CRM','HRM','Financieel','Ordermanagement','Abonnementen','Projecten','Fiscaal'],
-    rows: [
-      { id:1,  naam:'Workflows / Dossieritems',    categorie:'Algemeen',       actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'Uit analyse over 2025 blijkt dat de gemiddelde doorlooptijd van workflows vrij uiteen lopen. De meeste workflows hebben een doorlooptijd van enkele dagen, maar financiële workflows zoals contractverlenging (financieel), inkooprelatie en contract financieel hebben een gemiddelde doorlooptijd van meer dan 10 dagen. Ook twee HR-workflows zoals verlofaanvraag en medewerker opleiding hebben beiden een gemiddelde doorlooptijd van meer dan 15 dagen.\n\nWanneer er naar de frequentie van niet-akkoord wordt gekeken is te zien dat de meeste afkeuringen ook in bovengenoemde workflows naar boven komen. Het advies is om te kijken naar de analyse om te beoordelen of er optimalisatie in het proces nodig is om de doorlooptijd te verlagen.', Goed:'' }},
-      { id:2,  naam:'Logging',                      categorie:'Algemeen',       actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Er staat momenteel minimale logging aan in de AFAS-omgeving voor HRM, ERM en Finance. Het aanzetten van de logging is een kleine technische handeling, maar levert cruciale inzichten op in wat er in de omgeving gebeurt en door wie. Dit kan eventuele vragen bij audits voorkomen.', Optim:'', Goed:'' }},
-      { id:3,  naam:'Autorisatie',                  categorie:'Algemeen',       actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'In het huidige autorisatiemodel zijn er in totaal 117 groepen waarvan er 80 automatisch worden gevuld op basis van functie, selectie of systeem. 30% (37) van de groepen worden nog handmatig gevuld. Het handmatig vullen van groepen is een onderdeel wat veel onderhoud kost en gevoelig is voor fouten.\n\nHet advies is om kritisch te kijken in hoeverre de handmatige groepen middels aanvragen van persoonlijke rollen geautomatiseerd kunnen worden voor zowel een betere logging als voorkoming van fouten.', Goed:'' }},
-      { id:4,  naam:'Audits',                       categorie:'Financieel',     actief:true, score:'Goed',  expanded:false, teksten:{ Niet:'', Optim:'', Goed:'Voor de Salarisverwerking worden de Payroll Audits gebruikt en vinden controles plaats bij afwijkingen. Deze controles zorgen ervoor dat er na maandafsluiting geen acties nodig hoeven te zijn omdat deze aan de voorhand al opgelost kunnen worden.\n\nVoor de financiële audits wordt actief gebruikgemaakt van controles om afwijkingen tijdig te signaleren en te corrigeren. Op dit moment staan er nog 22 van de 72 foutmeldingen uit 2025 open. Het verder terugbrengen van dit aantal vergroot de betrouwbaarheid van de financiële verwerking.' }},
-      { id:5,  naam:'Licenties en gebruikers',      categorie:'Algemeen',       actief:true, score:'Goed',  expanded:false, teksten:{ Niet:'', Optim:'', Goed:'Uit de scan blijkt dat er vrijwel geen onnodig gebruik wordt gemaakt van de licenties. Het enige risico is het huidig aantal beschikbare InSite-gebruikers welke bijna op 0 staat. Op basis van de verwachte jaarlijkse in- en uitstroom kan worden bekeken in hoeverre dit daadwerkelijk een risico betreft en een aanpassing in de licentie nodig zal zijn.\n\nEr lijkt geen gebruik te worden gemaakt van meewerkgebruikers. Indien FCCA van mening is dat deze niet gebruikt worden, dan kan de licentie verlaagd worden voor een kleine maandelijkse kostenbesparing.' }},
-      { id:6,  naam:'Activa & Debiteuren',           categorie:'Financieel',     actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Volledige implementatie en optimalisatie van de Activa & Debiteuren-modules is een kans om de financiële processen beter te ondersteunen.', Optim:'', Goed:'' }},
-      { id:7,  naam:'Opschonen instellingen',        categorie:'Algemeen',       actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'Correct inrichten van foutieve basisinstellingen rondom autorisaties en algemeen documentbeheer.', Goed:'' }},
-      { id:8,  naam:'Contractmanagement',            categorie:'Ordermanagement',actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'Optimaliseren van de workflow voor contractbeheer inclusief automatische berichtgeving en notificaties.', Goed:'' }},
-      { id:9,  naam:'Documentbeheer',                categorie:'Algemeen',       actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Herstructurering van de huidige inrichting die momenteel niet naar behoren functioneert.', Optim:'', Goed:'' }},
-      { id:10, naam:'Factuurverwerking',             categorie:'Financieel',     actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'Integratie of optimalisatie van "Image Capture" voor inkomende facturen (behoud vanuit de Exact-werkwijze).', Goed:'' }},
-      { id:11, naam:'CBA Rapportages',               categorie:'Financieel',     actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Automatiseren van de twee verplichte maandelijkse rapportages voor de Centrale Bank Aruba (deadline elke 15e van de maand). Dit reduceert handmatig werk en vermindert het risico op te late indiening.', Optim:'', Goed:'' }},
-      { id:12, naam:'Business Intelligence / Power BI', categorie:'Algemeen',   actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Als test is door AFAS Power BI geactiveerd en neergezet, maar is er verder nog niks mee gedaan. Met de standaard templates van AFAS kunnen er dashboards gemaakt worden die flexibel en naar eigen wens aan te passen zijn.\n\nVanuit ProcesBouwers kunnen wij begeleiden in de overstap en FCCA stap voor stap meenemen in hoe dashboards gebouwd en onderhouden worden. Het voordeel hiervan is dat de kennis intern in huis blijft en rapportages in de toekomst zelfstandig geoptimaliseerd kunnen worden.', Optim:'', Goed:'' }},
-      { id:13, naam:'Condor Koppeling',              categorie:'Projecten',      actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Realiseren van een koppeling tussen de vastgoedsoftware (Condor) en AFAS.', Optim:'', Goed:'' }},
-      { id:14, naam:'DMS Migratie',                  categorie:'Projecten',      actief:true, score:'Optim', expanded:false, teksten:{ Niet:'', Optim:'Onderzoeken van de overstap van de in-house debiteurensoftware (DMS) naar Condor of AFAS.', Goed:'' }},
-      { id:15, naam:'InSite opmaak',                 categorie:'Algemeen',       actief:true, score:'Goed',  expanded:false, teksten:{ Niet:'', Optim:'', Goed:'De opmaak van InSite is grotendeels AFAS standaard opgemaakt met enkel een afwijking in logo. Het standaard thema AFAS Open 2021 – Blauw/geel is in gebruik genomen.\n\nVanuit Best Practice is het advies om meer gebruik te maken van paginaonderdelen om knoppen en overzichten beter uit te lichten. Voor eindgebruikers is het belangrijk dat InSite overzichtelijk is en de juiste informatie gepresenteerd wordt.' }},
-      { id:16, naam:'SCORFI-Workflows',              categorie:'HRM',            actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Binnen de organisatie wordt beperkt gebruikgemaakt van de HRM-module en bijbehorende workflows in AFAS. Er zijn geen SCORFI-workflows ingericht en wijzigingen worden voornamelijk mondeling of per mail besproken en daarna handmatig in AFAS verwerkt. Hierdoor ontbreekt logging op de wijzigingen.\n\nDoor het inrichten van de SCORFI-workflows kunnen wijzigingen via InSite worden doorgegeven met invoer bij de bron. Tevens biedt AFAS de mogelijkheid om via InSite direct documenten te genereren en digitaal te ondertekenen.', Optim:'', Goed:'' }},
-      { id:17, naam:'Declaraties',                   categorie:'HRM',            actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Momenteel zijn er geen workflows ingericht voor het declareren van zakelijke kosten. Door gebruik te maken van de declaratiemodule kunnen medewerkers hun kosten zelf indienen via AFAS InSite of de Pocket-app. Deze declaraties kunnen vervolgens via een workflow gecontroleerd en verwerkt worden en automatisch via de salarisadministratie worden uitbetaald. Dit vermindert handmatige handelingen, verkleint de foutkans en verhoogt het gebruiksgemak voor medewerkers.', Optim:'', Goed:'' }},
-      { id:18, naam:'Verzuim',                       categorie:'HRM',            actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Waar nog niet naar gekeken is zijn eventuele kansen in het digitaliseren van re-integratieprocessen rondom verzuim wegens andere wet- en regelgeving in Aruba ten opzichte van Nederland.', Optim:'', Goed:'' }},
-      { id:19, naam:'Bewaartermijnen',               categorie:'HRM',            actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Op basis van een steekproef controle is geconstateerd dat er nog geen bewaartermijnen in AFAS zijn ingericht en hierdoor geen automatische dossieropschoning plaatsvindt. Persoonsgegevens worden hierdoor langer bewaard dan wettelijk toegestaan is.\n\nDoor per dossieritem of workflow een automatische bewaartermijn in te stellen, borgt FCCA dat er proactief wordt voldaan aan de Arubaanse Landsverordening Persoonsregistraties (Lpr).', Optim:'', Goed:'' }},
-      { id:20, naam:'Control Framework',             categorie:'Algemeen',       actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'Sinds kort is het Control Framework als nieuwe functionaliteit beschikbaar binnen AFAS. Dit framework bevat al standaard geïntegreerde templates voor de belangrijkste normeringen en certificeringen, zoals NEN 4400-1, ISO 27001:2022 en ISO 9001:2015.\n\nDoor het Control Framework in te zetten, is de organisatie gestructureerd en geautomatiseerd voorbereid op audits. Dit geeft het bestuur zekerheid over compliancy en haalt direct een zware, handmatige verantwoordingslast weg bij het huidige team.', Optim:'', Goed:'' }},
-      { id:21, naam:'AI in AFAS (Jonas)',            categorie:'Algemeen',       actief:true, score:'Niet',  expanded:false, teksten:{ Niet:'De nieuwe AI-functionaliteit van AFAS (Jonas) biedt veel mogelijkheden:\n• Bonnetjes herkennen in AFAS Pocket voor declaraties\n• AI-stappen tussen workflows voor vragen over arbeidsvoorwaarden\n• Documenten uitlezen en reactie geven\n• Spraaktaak omzetten naar tekst (handig voor 1-op-1 gesprekken of college)', Optim:'', Goed:'' }}
-    ]
+    rows: []
   };
 
   const SCORES = [
@@ -910,6 +889,7 @@
   let activeCats    = new Set(CATEGORIES); // alle categorieën zichtbaar
   const STORAGE_KEY  = 'omgevingsscan_data';
   const LIBRARY_KEY  = 'omgevingsscan_library';
+  const PB_BEELDMERK_B64 = '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';
 
   function emptyTeksten() {
     return Object.fromEntries(SCORES.map(s => [s.key, '']));
@@ -1419,90 +1399,253 @@
     if (e.target === document.getElementById('preview-modal')) closePreview();
   }
 
-  // ── Document downloaden (vanuit preview) ──
-  function downloadDoc() {
+  // ── Helpers voor docx library ──
+  function b64ToUint8(b64) {
+    const bin = atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return arr;
+  }
+
+  function dataUriToUint8(dataUri) {
+    const parts = dataUri.split(',');
+    return b64ToUint8(parts[1] || parts[0]);
+  }
+
+  function dataUriType(dataUri) {
+    const m = dataUri.match(/^data:image\/(png|jpe?g|gif|webp|bmp)/i);
+    if (m) return m[1].toLowerCase().replace('jpeg','jpg');
+    return 'png';
+  }
+
+  // ── Afbeelding-afmetingen schatten uit data URI (voor docx ImageRun) ──
+  async function getImageDims(dataUri, maxW, maxH) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.naturalWidth, h = img.naturalHeight;
+        if (w > maxW) { h = h * maxW / w; w = maxW; }
+        if (h > maxH) { w = w * maxH / h; h = maxH; }
+        resolve({ width: Math.round(w), height: Math.round(h) });
+      };
+      img.onerror = () => resolve({ width: maxW, height: Math.round(maxW * 0.6) });
+      img.src = dataUri;
+    });
+  }
+
+  // ── Document downloaden (vanuit preview) — echte .docx met docx-js ──
+  async function downloadDoc() {
+    const D = window.docx;
+    if (!D) { showToast('⚠️ docx library niet geladen. Controleer je internetverbinding en herlaad de pagina.'); return; }
+
     const activeRows = rows.filter(r => r.score);
     if (activeRows.length === 0) return;
 
     const now     = new Date();
     const dateStr = now.toLocaleDateString('nl-NL', {year:'numeric',month:'long',day:'numeric'});
-    const headerText = replaceKlant(docHeaderTekst);
-    const footerText = replaceKlant(docFooterTekst);
-    const headerBlok = headerText ? `<p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:11pt;color:#2d3748;line-height:1.65;margin:0 0 22pt;">${escHtml(headerText).replace(/\n/g,'<br/>')}</p>` : '';
-    const footerBlok = footerText ? `<p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:11pt;color:#2d3748;line-height:1.65;margin:28pt 0 0;">${escHtml(footerText).replace(/\n/g,'<br/>')}</p>` : '';
+    const titel   = headerTekst ? `Omgevingsscan — ${headerTekst}` : 'Omgevingsscan';
+    const hdrText = replaceKlant(docHeaderTekst);
+    const ftrText = replaceKlant(docFooterTekst);
 
-    // Collect all data-URI images and replace with cid: references for MHTML
-    const imgParts = [];
-    let imgCounter = 0;
+    // Decode images
+    const logoData      = b64ToUint8(PB_LOGO_B64);
+    const beeldmerkData = b64ToUint8(PB_BEELDMERK_B64);
 
-    // Add PB Logo as first image part
-    const logoContentType = 'image/png';
-    const logoCid = 'pb-logo@omgevingsscan';
-    imgParts.push({ cid: logoCid, contentType: logoContentType, base64: PB_LOGO_B64 });
+    // Build content children
+    const children = [];
 
-    // Build Word content with cid references for the logo
-    let bodyContent = buildCatSections(activeRows, false);
+    // ── Logo bovenaan ──
+    children.push(new D.Paragraph({
+      spacing: { after: 200 },
+      children: [new D.ImageRun({
+        type: 'png', data: logoData,
+        transformation: { width: 200, height: 42 },
+        altText: { title: 'Proces Bouwers', description: 'PB Logo', name: 'Logo' }
+      })]
+    }));
 
-    // Extract data-URI images from body content and replace with cid references
-    bodyContent = bodyContent.replace(/src="data:([^;]+);base64,([^"]+)"/g, function(match, mime, b64) {
-      imgCounter++;
-      const cid = 'img' + imgCounter + '@omgevingsscan';
-      imgParts.push({ cid: cid, contentType: mime, base64: b64 });
-      return 'src="cid:' + cid + '"';
-    });
+    // ── Titel met navy lijn eronder ──
+    children.push(new D.Paragraph({
+      spacing: { after: 60 },
+      border: { bottom: { style: D.BorderStyle.SINGLE, size: 6, color: '23296C', space: 8 } },
+      children: [new D.TextRun({ text: titel, font: 'Roboto', size: 40, bold: true, color: '23296C' })]
+    }));
 
-    const docHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office'
-      xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-<head><meta charset='utf-8'/><title>Omgevingsscan</title>
-<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
-<style>@page{size:A4;margin:2.5cm 2.5cm 2.5cm 2.5cm;}body{font-family:'Roboto','Segoe UI',Calibri,sans-serif;}</style>
-</head>
-<body>
-  <p style="margin:0 0 14pt;"><img src="cid:${logoCid}" style="height:40pt;width:auto;" alt="Proces Bouwers"/></p>
-  <div style="border-bottom:3pt solid #23296C;padding-bottom:14pt;margin-bottom:20pt;">
-    <h1 style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:22pt;color:#23296C;font-weight:bold;margin:0 0 4pt;">
-      Omgevingsscan${headerTekst?' — '+escHtml(headerTekst):''}
-    </h1>
-    <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:10pt;color:#718096;margin:0 0 2pt;">De tool waarmee Proces Bouwers nederland productiever maakt</p>
-    <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:9pt;color:#a0aec0;margin:0;">Aangemaakt op ${dateStr} &nbsp;·&nbsp; ${activeRows.length} variabele${activeRows.length!==1?'n':''}</p>
-  </div>
-  ${headerBlok}
-  ${bodyContent}
-  ${footerBlok}
-  <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:8pt;color:#a0aec0;margin-top:36pt;text-align:center;">Meer grip op AFAS? Ontdek onze inzichten via procesbouwers.nl</p>
-</body></html>`;
+    children.push(new D.Paragraph({
+      spacing: { after: 20 },
+      children: [new D.TextRun({ text: 'De tool waarmee Proces Bouwers nederland productiever maakt', font: 'Roboto', size: 20, color: '718096' })]
+    }));
 
-    // Build MHTML document with embedded images
-    const boundary = '----=_NextPart_' + Date.now().toString(36);
-    let mhtml = 'MIME-Version: 1.0\r\n';
-    mhtml += 'Content-Type: multipart/related; boundary="' + boundary + '"\r\n\r\n';
+    children.push(new D.Paragraph({
+      spacing: { after: 240 },
+      children: [new D.TextRun({ text: `Aangemaakt op ${dateStr}  ·  ${activeRows.length} variabele${activeRows.length!==1?'n':''}`, font: 'Roboto', size: 18, color: 'A0AEC0' })]
+    }));
 
-    // HTML part
-    mhtml += '--' + boundary + '\r\n';
-    mhtml += 'Content-Type: text/html; charset="utf-8"\r\n';
-    mhtml += 'Content-Transfer-Encoding: quoted-printable\r\n\r\n';
-    mhtml += docHtml + '\r\n\r\n';
-
-    // Image parts
-    for (const img of imgParts) {
-      mhtml += '--' + boundary + '\r\n';
-      mhtml += 'Content-Type: ' + img.contentType + '\r\n';
-      mhtml += 'Content-Transfer-Encoding: base64\r\n';
-      mhtml += 'Content-ID: <' + img.cid + '>\r\n\r\n';
-      // Split base64 into 76-char lines
-      const b64 = img.base64;
-      for (let i = 0; i < b64.length; i += 76) {
-        mhtml += b64.slice(i, i + 76) + '\r\n';
-      }
-      mhtml += '\r\n';
+    // ── Header tekst ──
+    if (hdrText) {
+      const hdrLines = hdrText.split('\n');
+      hdrLines.forEach((line, i) => {
+        children.push(new D.Paragraph({
+          spacing: { after: i === hdrLines.length - 1 ? 280 : 80 },
+          children: [new D.TextRun({ text: line, font: 'Roboto', size: 22, color: '2D3748' })]
+        }));
+      });
     }
 
-    mhtml += '--' + boundary + '--\r\n';
+    // ── Categorie secties ──
+    const catOrder = [...CATEGORIES, ...activeRows.map(r=>r.categorie).filter(c=>!CATEGORIES.includes(c)).filter((c,i,a)=>a.indexOf(c)===i)];
+    for (const cat of catOrder) {
+      const catRows = activeRows.filter(r => r.categorie === cat);
+      if (catRows.length === 0) continue;
 
-    const blob = new Blob([mhtml], { type: 'application/msword' });
+      // Categorie heading
+      children.push(new D.Paragraph({
+        spacing: { before: 320, after: 120 },
+        border: { bottom: { style: D.BorderStyle.SINGLE, size: 4, color: '3251C4', space: 6 } },
+        children: [
+          new D.TextRun({ text: cat, font: 'Roboto', size: 30, bold: true, color: '23296C' }),
+          new D.TextRun({ text: `  ${catRows.length} item${catRows.length!==1?'s':''}`, font: 'Roboto', size: 18, color: 'A0AEC0' }),
+        ]
+      }));
+
+      // Items
+      for (let idx = 0; idx < catRows.length; idx++) {
+        const r = catRows[idx];
+        const s = SCORE_MAP[r.score];
+        const tekst = replaceKlant(r.teksten[r.score] || '');
+        const imgs = Array.isArray(r.afbeeldingen) ? r.afbeeldingen : [];
+
+        // Item nummer + naam
+        children.push(new D.Paragraph({
+          spacing: { before: 200, after: 40 },
+          children: [
+            new D.TextRun({ text: `${idx+1}. `, font: 'Roboto', size: 18, color: '6B7280' }),
+            new D.TextRun({ text: r.naam, font: 'Roboto', size: 24, bold: true, color: '23296C' }),
+          ]
+        }));
+
+        // Score badge als tekst
+        const badgeRuns = [
+          new D.TextRun({ text: `${EMOJIS[s.key]} ${s.label}`, font: 'Roboto', size: 18, bold: true, color: s.color.replace('#','') }),
+        ];
+        if (r.quickwin) {
+          badgeRuns.push(new D.TextRun({ text: '   ⚡ Quick Win', font: 'Roboto', size: 18, bold: true, color: '3251C4' }));
+        }
+        children.push(new D.Paragraph({ spacing: { after: 80 }, children: badgeRuns }));
+
+        // Tekst
+        if (tekst) {
+          const lines = tekst.split('\n');
+          lines.forEach((line, li) => {
+            children.push(new D.Paragraph({
+              spacing: { after: li === lines.length - 1 ? 100 : 60 },
+              children: [new D.TextRun({ text: line, font: 'Roboto', size: 22, color: '2D3748' })]
+            }));
+          });
+        } else {
+          children.push(new D.Paragraph({
+            spacing: { after: 100 },
+            children: [new D.TextRun({ text: 'Geen tekst ingevuld', font: 'Roboto', size: 22, color: 'A0AEC0', italics: true })]
+          }));
+        }
+
+        // Afbeeldingen
+        for (const src of imgs) {
+          try {
+            const imgType = dataUriType(src);
+            const imgData = dataUriToUint8(src);
+            const dims = await getImageDims(src, 500, 350);
+            children.push(new D.Paragraph({
+              spacing: { after: 120 },
+              children: [new D.ImageRun({
+                type: imgType, data: imgData,
+                transformation: dims,
+                altText: { title: r.naam, description: 'Screenshot', name: 'img' }
+              })]
+            }));
+          } catch(e) { console.warn('Afbeelding overgeslagen:', e); }
+        }
+
+        // Scheidingslijn (behalve na laatste item)
+        if (idx < catRows.length - 1) {
+          children.push(new D.Paragraph({
+            spacing: { before: 40, after: 40 },
+            border: { bottom: { style: D.BorderStyle.SINGLE, size: 1, color: 'E2E8F0', space: 4 } },
+            children: []
+          }));
+        }
+      }
+    }
+
+    // ── Footer tekst ──
+    if (ftrText) {
+      children.push(new D.Paragraph({ spacing: { before: 320 }, children: [] }));
+      const ftrLines = ftrText.split('\n');
+      ftrLines.forEach((line, i) => {
+        children.push(new D.Paragraph({
+          spacing: { after: i === ftrLines.length - 1 ? 200 : 80 },
+          children: [new D.TextRun({ text: line, font: 'Roboto', size: 22, color: '2D3748' })]
+        }));
+      });
+    }
+
+    // ── Footer tagline ──
+    children.push(new D.Paragraph({
+      spacing: { before: 400 },
+      alignment: D.AlignmentType.CENTER,
+      children: [new D.TextRun({ text: 'Meer grip op AFAS? Ontdek onze inzichten via procesbouwers.nl', font: 'Roboto', size: 16, color: 'A0AEC0' })]
+    }));
+
+    // ── Document samenstellen ──
+    const doc = new D.Document({
+      styles: {
+        default: { document: { run: { font: 'Roboto', size: 22 } } },
+      },
+      sections: [{
+        properties: {
+          page: {
+            size: { width: 11906, height: 16838 },
+            margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 }
+          },
+          titlePage: true,
+        },
+        headers: {
+          default: new D.Header({
+            children: [new D.Paragraph({
+              alignment: D.AlignmentType.RIGHT,
+              children: [new D.ImageRun({
+                type: 'png', data: beeldmerkData,
+                transformation: { width: 27, height: 44 },
+                altText: { title: 'PB', description: 'Beeldmerk', name: 'Beeldmerk' }
+              })]
+            })]
+          }),
+          first: new D.Header({ children: [new D.Paragraph({ children: [] })] }),
+        },
+        footers: {
+          default: new D.Footer({
+            children: [
+              new D.Paragraph({
+                alignment: D.AlignmentType.CENTER,
+                children: [new D.TextRun({ text: 'Meer grip op AFAS? Ontdek onze inzichten via procesbouwers.nl', font: 'Roboto', size: 16, color: 'A0AEC0' })]
+              }),
+              new D.Paragraph({
+                alignment: D.AlignmentType.RIGHT,
+                children: [new D.TextRun({ children: [D.PageNumber.CURRENT], font: 'Roboto', size: 20, color: '718096' })]
+              }),
+            ]
+          }),
+          first: new D.Footer({ children: [new D.Paragraph({ children: [] })] }),
+        },
+        children
+      }]
+    });
+
+    // ── Genereer en download .docx ──
+    const blob = await D.Packer.toBlob(doc);
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
-    a.href = url; a.download = `omgevingsscan-${now.toISOString().slice(0,10)}.doc`;
+    a.href = url; a.download = `omgevingsscan-${now.toISOString().slice(0,10)}.docx`;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast(`✅ Document gedownload met ${activeRows.length} variabele${activeRows.length!==1?'n':''}!`);

@@ -8,3 +8,12 @@ desktop.ini
 *.tmp
 *.bak
 *.swp
+
+# Klant- en werkbestanden (niet publiceren)
+Completed scans/
+Huidige scan/
+PB-layout/
+backup_*/
+Omgevingsscan_PB.docx
+Stappenplan Omgevingsscan App.docx
+VBA.txt
