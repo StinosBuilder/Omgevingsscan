@@ -279,7 +279,7 @@
     thead th:nth-child(3) { width: 170px; }
     thead th:nth-child(4) { width: 42px; text-align: center; }
     thead th:nth-child(5) { width: 90px; }
-    thead th:last-child  { width: 46px; text-align: center; }
+    thead th:nth-child(6) { width: 46px; text-align: center; }
 
     tbody tr.row-main { border-bottom: 1px solid rgba(255,255,255,0.08); transition: background 0.1s; }
     tbody tr.row-main:hover { background: rgba(255,255,255,0.08); }
@@ -288,7 +288,7 @@
     tbody tr.row-detail.hidden { display: none; }
 
     td { padding: 10px 10px; vertical-align: middle; color: rgba(255,255,255,0.90); }
-    td:last-child  { text-align: center; }
+    td:nth-child(6) { text-align: center; }
 
     .checkbox-wrap { display: flex; justify-content: center; }
     .checkbox-wrap input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: white; }
@@ -335,6 +335,31 @@
     .btn-expand.open  { background: rgba(255,255,255,0.20); border-color: rgba(255,255,255,0.50); }
     .btn-expand.incomplete { background: rgba(246,173,85,0.25); border-color: #f6ad55; color: #f6ad55; }
     .btn-expand.incomplete:hover { background: rgba(246,173,85,0.35); border-color: #f6ad55; }
+
+    /* Mobiele expand-knop in tabel */
+    .btn-mob-expand {
+      background: rgba(255,255,255,0.10); border: 1.5px solid rgba(255,255,255,0.22); color: rgba(255,255,255,0.70);
+      padding: 4px 8px; border-radius: 6px; font-size: 0.82rem; cursor: pointer; transition: all 0.15s; line-height: 1;
+    }
+    .btn-mob-expand:hover { border-color: rgba(255,255,255,0.50); background: rgba(255,255,255,0.18); }
+    .btn-mob-expand.open { background: rgba(255,255,255,0.20); border-color: rgba(255,255,255,0.50); color: white; }
+
+    /* Mobiel rij-instellingen in detail-paneel (standaard verborgen) */
+    .mob-row-settings {
+      display: none; flex-wrap: wrap; gap: 10px; align-items: center;
+      padding: 12px 0 8px; margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      grid-column: 1 / -1;
+    }
+    .mob-row-settings label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: rgba(255,255,255,0.55); margin-right: 4px;
+    }
+    .mob-row-settings .cat-select { width: auto; min-width: 120px; }
+    .mob-row-settings .mob-qw-wrap {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .mob-row-settings .btn-danger { margin-left: auto; }
 
     /* Detail panel */
     .detail-inner { padding: 16px 22px 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; background: rgba(0,0,0,0.18); backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.10); }
@@ -469,6 +494,9 @@
     }
     #toast.show { opacity: 1; transform: translateY(0); }
 
+    /* Mobiele settings-knop: standaard verborgen op desktop */
+    .mob-settings-col { display: none; }
+
     @media (max-width: 760px) {
       .info-panel-inner { grid-template-columns: 1fr; }
       .info-right { grid-template-columns: 1fr; }
@@ -478,6 +506,25 @@
       .landing-card { width: 95%; padding: 28px 20px; }
       .toolbar { flex-wrap: wrap; gap: 10px; }
       .toolbar-right { flex-wrap: wrap; }
+
+      /* Tabel: verberg Categorie, QW, Tekst, Verw. op mobiel */
+      #main-table thead th:nth-child(2),
+      #main-table thead th:nth-child(4),
+      #main-table thead th:nth-child(5),
+      #main-table thead th:nth-child(6),
+      #main-table tbody td:nth-child(2),
+      #main-table tbody td:nth-child(4),
+      #main-table tbody td:nth-child(5),
+      #main-table tbody td:nth-child(6) { display: none; }
+
+      /* Mobiele settings-knop tonen */
+      .mob-settings-col { display: table-cell; }
+
+      /* Score pills compacter op mobiel */
+      .score-pill { padding: 2px 7px; font-size: 0.68rem; }
+
+      /* Mobiel rij-instellingen blok in detail */
+      .mob-row-settings { display: flex !important; }
     }
 
     /* ── LIBRARY MODAL ── */
@@ -779,11 +826,12 @@
           <th style="width:58px;text-align:center;">QW</th>
           <th>Tekst</th>
           <th>Verw.</th>
+          <th class="mob-settings-col" style="width:40px;"></th>
         </tr>
       </thead>
       <tbody id="tbody">
         <tr id="empty-row">
-          <td colspan="6">
+          <td colspan="7">
             <div class="empty-state">
               <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -1077,6 +1125,9 @@
     const det  = document.getElementById(`detail-${id}`);
     if (btn) { btn.classList.toggle('open', r.expanded); btn.textContent = r.expanded ? '▲ Sluiten' : '▼ Teksten'; updateExpandBtnStyle(r.id); }
     if (det) det.style.display = r.expanded ? 'table-row' : 'none';
+    // Sync mobiele expand-knop
+    const mobBtn = document.querySelector(`#row-${id} .btn-mob-expand`);
+    if (mobBtn) mobBtn.classList.toggle('open', r.expanded);
   }
 
   function updateTekst(id, key, value) {
@@ -1128,7 +1179,17 @@
             <button class="img-remove-btn" onclick="removeAfbeelding(${r.id},${idx})">✕</button>
           </div>`).join('')
       : '';
-    return SCORES.map(s => `
+    return `<div class="mob-row-settings">
+        <label>Categorie</label>
+        <select class="cat-select" onchange="updateCategorie(${r.id}, this.value)">
+          ${CATEGORIES.map(c => `<option value="${c}"${r.categorie===c?' selected':''}>${c}</option>`).join('')}
+        </select>
+        <div class="mob-qw-wrap">
+          <label style="margin:0;">QW</label>
+          <input type="checkbox" ${r.quickwin?'checked':''} onchange="toggleQuickwin(${r.id})" title="Quick Win" style="width:18px;height:18px;cursor:pointer;accent-color:#3251c4;"/>
+        </div>
+        <button class="btn-danger" onclick="removeRow(${r.id})" title="Verwijderen">✕ Verwijderen</button>
+      </div>` + SCORES.map(s => `
       <div class="field-group ${s.css}">
         <label>${EMOJIS[s.key]} ${s.label}</label>
         <textarea placeholder="Omschrijving voor '${s.label}'…"
@@ -1160,7 +1221,7 @@
   function renderTable() {
     const tbody = document.getElementById('tbody');
     if (rows.length === 0) {
-      tbody.innerHTML = `<tr id="empty-row"><td colspan="6">
+      tbody.innerHTML = `<tr id="empty-row"><td colspan="7">
         <div class="empty-state">
           <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
             <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -1197,9 +1258,10 @@
         <td><button class="btn-expand${r.expanded?' open':''}${hasIncompleteTeksten(r)?' incomplete':''}" id="expand-btn-${r.id}"
           onclick="toggleExpand(${r.id})">${r.expanded?'▲ Sluiten':'▼ Teksten'}</button></td>
         <td><button class="btn-danger" onclick="removeRow(${r.id})" title="Verwijderen">✕</button></td>
+        <td class="mob-settings-col"><button class="btn-mob-expand${r.expanded?' open':''}" onclick="toggleExpand(${r.id})" title="Instellingen">⚙</button></td>
       </tr>
       <tr class="row-detail${hidden}" id="detail-${r.id}" style="display:${r.expanded&&!hidden?'table-row':'none'}">
-        <td colspan="6" style="padding:0;">
+        <td colspan="7" style="padding:0;">
           <div class="detail-inner">${detailHTML(r)}</div>
         </td>
       </tr>`;
