@@ -272,13 +272,14 @@
     table { width: 100%; border-collapse: collapse; }
     thead tr { background: rgba(255,255,255,0.15); border-bottom: 1px solid rgba(255,255,255,0.18); }
     thead th {
-      padding: 11px 14px; text-align: left;
+      padding: 11px 10px; text-align: left;
       font-size: 0.71rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: rgba(255,255,255,0.80);
     }
-    thead th:nth-child(2) { width: 150px; }
-    thead th:nth-child(4) { width: 58px; text-align: center; }
-    thead th:nth-child(5) { width: 110px; }
-    thead th:last-child  { width: 66px; text-align: center; }
+    thead th:nth-child(2) { width: 115px; }
+    thead th:nth-child(3) { width: 170px; }
+    thead th:nth-child(4) { width: 42px; text-align: center; }
+    thead th:nth-child(5) { width: 90px; }
+    thead th:last-child  { width: 46px; text-align: center; }
 
     tbody tr.row-main { border-bottom: 1px solid rgba(255,255,255,0.08); transition: background 0.1s; }
     tbody tr.row-main:hover { background: rgba(255,255,255,0.08); }
@@ -286,7 +287,7 @@
     tbody tr.row-main.hidden { display: none; }
     tbody tr.row-detail.hidden { display: none; }
 
-    td { padding: 10px 14px; vertical-align: middle; color: rgba(255,255,255,0.90); }
+    td { padding: 10px 10px; vertical-align: middle; color: rgba(255,255,255,0.90); }
     td:last-child  { text-align: center; }
 
     .checkbox-wrap { display: flex; justify-content: center; }
@@ -727,12 +728,11 @@
       <input type="file" id="bulk-img-input" multiple accept="image/png,image/jpeg,image/gif,image/webp" style="display:none" onchange="handleBulkImgImport(this)"/>
     </div>
     <div class="toolbar-right">
-    <button class="btn-primary" onclick="openSettings()" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);">
-      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <button class="btn-primary" onclick="openSettings()" title="Instellingen" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);padding:6px 8px;min-width:0;">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
         <circle cx="12" cy="12" r="3"/>
       </svg>
-      Instellingen
     </button>
     <button class="btn-primary" onclick="exportCurrentScan()" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);">
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
