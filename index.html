@@ -636,7 +636,6 @@
     <div class="header-divider"></div>
     <div class="header-text">
       <h1>Omgevings<span>scan</span></h1>
-      <p>De tool waarmee Proces Bouwers nederland productiever maakt</p>
     </div>
   </div>
 </header>
@@ -1425,16 +1424,15 @@
     const footerText = replaceKlant(docFooterTekst);
 
     document.getElementById('doc-paper-content').innerHTML = `
-      <div style="margin-bottom:18px;"><img src="Logo PB blauw.png" alt="Proces Bouwers" style="height:44px;width:auto;"/></div>
+      <div style="margin-bottom:18px;"><img src="Logo PB blauw.png" alt="Logo" style="height:44px;width:auto;"/></div>
       <div class="doc-title-bar">
         <div class="doc-main-title">${titel}</div>
-        <div class="doc-subtitle">De tool waarmee Proces Bouwers nederland productiever maakt</div>
         <div class="doc-meta">Aangemaakt op ${dateStr} &nbsp;·&nbsp; ${activeRows.length} variabele${activeRows.length!==1?'n':''}</div>
       </div>
       ${headerText ? `<div class="doc-intro">${escHtml(headerText).replace(/\n/g,'<br/>')}</div>` : ''}
       ${buildCatSections(activeRows, true)}
       ${footerText ? `<div class="doc-outro">${escHtml(footerText).replace(/\n/g,'<br/>')}</div>` : ''}
-      <div class="doc-footer-line">Meer grip op AFAS? Ontdek onze inzichten via procesbouwers.nl</div>`;
+      `;
 
     document.getElementById('preview-modal').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -1510,7 +1508,7 @@
       children: [new D.ImageRun({
         type: 'png', data: logoData,
         transformation: { width: 200, height: 42 },
-        altText: { title: 'Proces Bouwers', description: 'PB Logo', name: 'Logo' }
+        altText: { title: 'Logo', description: 'Logo', name: 'Logo' }
       })]
     }));
 
@@ -1519,11 +1517,6 @@
       spacing: { after: 60 },
       border: { bottom: { style: D.BorderStyle.SINGLE, size: 6, color: '23296C', space: 8 } },
       children: [new D.TextRun({ text: titel, font: 'Roboto', size: 40, bold: true, color: '23296C' })]
-    }));
-
-    children.push(new D.Paragraph({
-      spacing: { after: 20 },
-      children: [new D.TextRun({ text: 'De tool waarmee Proces Bouwers nederland productiever maakt', font: 'Roboto', size: 20, color: '718096' })]
     }));
 
     children.push(new D.Paragraph({
@@ -1639,13 +1632,6 @@
       });
     }
 
-    // ── Footer tagline ──
-    children.push(new D.Paragraph({
-      spacing: { before: 400 },
-      alignment: D.AlignmentType.CENTER,
-      children: [new D.TextRun({ text: 'Meer grip op AFAS? Ontdek onze inzichten via procesbouwers.nl', font: 'Roboto', size: 16, color: 'A0AEC0' })]
-    }));
-
     // ── Document samenstellen ──
     const doc = new D.Document({
       styles: {
@@ -1675,10 +1661,6 @@
         footers: {
           default: new D.Footer({
             children: [
-              new D.Paragraph({
-                alignment: D.AlignmentType.CENTER,
-                children: [new D.TextRun({ text: 'Meer grip op AFAS? Ontdek onze inzichten via procesbouwers.nl', font: 'Roboto', size: 16, color: 'A0AEC0' })]
-              }),
               new D.Paragraph({
                 alignment: D.AlignmentType.RIGHT,
                 children: [new D.TextRun({ children: [D.PageNumber.CURRENT], font: 'Roboto', size: 20, color: '718096' })]

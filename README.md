@@ -1,6 +1,6 @@
-# Omgevingsscan — Proces Bouwers
+# Omgevingsscan
 
-Interactieve HTML-tool waarmee consultants een omgevingsscan uitvoeren bij klanten. Per bedrijfsproces (CRM, HRM, Financieel, etc.) worden variabelen gescoord en automatisch omgezet naar een professioneel Word-document in de Proces Bouwers huisstijl.
+Interactieve HTML-tool waarmee consultants een omgevingsscan uitvoeren bij klanten. Per bedrijfsproces (CRM, HRM, Financieel, etc.) worden variabelen gescoord en automatisch omgezet naar een professioneel Word-document in een professionele huisstijl.
 
 ## Hoe te gebruiken
 
@@ -27,7 +27,7 @@ Open `omgevingsscan.html` in een browser. Alles draait lokaal — er is geen ser
 | `Stappenplan Omgevingsscan App.docx` | Stappenplan voor verdere ontwikkeling |
 | `Completed scans/` | Opgeslagen voltooide scans |
 | `Huidige scan/` | Werkbestanden huidige scan |
-| `PB-layout/` | Proces Bouwers huisstijl-assets en brand guide |
+| `PB-layout/` | Huisstijl-assets en brand guide |
 | `backup_2026-02-28/` | Backup van eerdere versie |
 
 ## Belangrijkste features
@@ -43,7 +43,7 @@ Open `omgevingsscan.html` in een browser. Alles draait lokaal — er is geen ser
 
 ## Huisstijl (PB Layout)
 
-De tool en het gegenereerde document gebruiken de Proces Bouwers huisstijl:
+De tool en het gegenereerde document gebruiken de huisstijl:
 
 - **Navy** `#1E2E7A` — titels, koppen, scheidslijnen
 - **PB Blue** `#3251C4` — accenten, kop-borders, Quick Win badge
