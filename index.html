@@ -244,6 +244,7 @@
     .container { max-width: 1060px; margin: 24px auto; padding: 0 20px; }
     .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .toolbar-left { display: flex; gap: 10px; align-items: center; }
+    .toolbar-right { display: flex; gap: 8px; align-items: center; }
 
     /* ── BUTTONS ── */
     button {
@@ -474,6 +475,8 @@
       .header-accent { display: none; }
       .landing-body { grid-template-columns: 1fr; }
       .landing-card { width: 95%; padding: 28px 20px; }
+      .toolbar { flex-wrap: wrap; gap: 10px; }
+      .toolbar-right { flex-wrap: wrap; }
     }
 
     /* ── LIBRARY MODAL ── */
@@ -723,7 +726,7 @@
       </button>
       <input type="file" id="bulk-img-input" multiple accept="image/png,image/jpeg,image/gif,image/webp" style="display:none" onchange="handleBulkImgImport(this)"/>
     </div>
-    <div style="display:flex;gap:8px;align-items:center;">
+    <div class="toolbar-right">
     <button class="btn-primary" onclick="openSettings()" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);">
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
