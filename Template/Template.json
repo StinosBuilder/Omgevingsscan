@@ -1,8 +1,8 @@
 {
   "seedVersion": 1,
   "counter": 18,
-  "headerTekst": "Omgevingsscan AFAS University of Aruba [cite: 1]",
-  "docHeaderTekst": "Het doel van deze scan is het identificeren van knelpunten en het zichtbaar maken van onbenutte kansen binnen de huidige AFAS-omgeving. [cite: 3] Vanuit dit overzicht kunnen we gerichte keuzes maken over de vervolgstappen en de impact daarvan op de organisatie bepalen. [cite: 4] Het uitgangspunt is structurele werkdrukverlaging voor de ondersteunende afdelingen (HR en Finance), het verhogen van de efficiëntie en het versterken van de interne controle (compliance), zonder dat hiervoor een fulltime applicatiebeheerder nodig is. [cite: 5]",
+  "headerTekst": "Omgevingsscan [klant]",
+  "docHeaderTekst": "Het doel van deze scan is het identificeren van knelpunten en het zichtbaar maken van onbenutte kansen binnen de huidige AFAS-omgeving.",
   "docFooterTekst": "Dit rapport biedt een overzicht van de huidige knelpunten en de onbenutte kansen binnen de AFAS-omgeving. [cite: 105] Tijdens onze geplande overleggen van volgende week en de week daarop, neem ik dit document graag met jullie door. [cite: 106] We kunnen dan gezamenlijk kijken naar jullie prioriteiten en strategische doelen. [cite: 107] Op basis van die input stellen we vervolgens een realistische, behapbare planning op voor 2026, uiteraard afgestemd op de huidige draagkracht van de organisatie. [cite: 108]",
   "activeCats": [
     "Algemeen",
