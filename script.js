@@ -151,7 +151,7 @@ function toggleCatFilter(cat, el) {
   // update chip style
   el.closest('.cat-chip').classList.toggle('checked', el.checked);
   applyFilter();
-  saveData();
+  debounceSave();
 }
 
 function applyFilter() {
@@ -230,7 +230,7 @@ function updateCategorie(id, value) {
 
 function toggleQuickwin(id) {
   const r = rows.find(r => r.id === id);
-  if (r) { r.quickwin = !r.quickwin; saveData(); }
+  if (r) { r.quickwin = !r.quickwin; debounceSave(); }
   const cb = document.getElementById(`qw-${id}`);
   if (cb) cb.checked = r.quickwin;
 }
@@ -1007,7 +1007,7 @@ function toggleChecklistDone(id, done) {
   const item = checklistItems.find(i => i.id === id);
   if (item) item.done = done;
   renderChecklist();
-  saveData();
+  debounceSave();
 }
 
 function toggleDoneList() {
