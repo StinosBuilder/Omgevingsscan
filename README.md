@@ -17,7 +17,7 @@ Open `omgevingsscan.html` in een browser. Alles draait lokaal — er is geen ser
 | Bestand / map | Omschrijving |
 |---|---|
 | `omgevingsscan.html` | De tool zelf (open in browser) |
-| `docx.umd.js` | Docx-bibliotheek voor Word-export |
+| `docx.umd.js` | Docx-bibliotheek voor Word-export (docx.js v8.x — https://www.npmjs.com/package/docx) |
 | `Background.jpg` | Achtergrondafbeelding UI |
 | `Logo wit.png` | Wit logo voor de donkere header in de tool |
 | `Logo PB blauw.png` | Blauw logo voor documenten |

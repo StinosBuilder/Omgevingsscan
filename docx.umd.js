@@ -1,3 +1,4 @@
+// docx.js v8.x - https://www.npmjs.com/package/docx
 (function(global2, factory) {
   typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.docx = {}));
 })(this, (function(exports2) {
