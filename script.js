@@ -159,8 +159,8 @@ function renderCatFilter() {
   wrap.innerHTML = CATEGORIES.map(c => {
     const checked = activeCats.has(c);
     return `<label class="cat-chip${checked ? ' checked' : ''}">
-      <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleCatFilter('${c}', this)"/>
-      ${c}
+      <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleCatFilter(${JSON.stringify(c)}, this)"/>
+      ${escHtml(c)}
     </label>`;
   }).join('');
 }
@@ -268,7 +268,7 @@ function toggleQuickwin(id) {
 function scoreHTML(r) {
   return SCORES.map(s => {
     const sel = r.score === s.key ? ' selected' : '';
-    return `<span class="score-pill ${s.css}${sel}" onclick="setScore(${r.id},'${s.key}')">${s.label}</span>`;
+    return `<span class="score-pill ${s.css}${sel}" onclick="setScore(${r.id},${JSON.stringify(s.key)})">${escHtml(s.label)}</span>`;
   }).join('');
 }
 
@@ -285,7 +285,7 @@ function detailHTML(r) {
   return `<div class="mob-row-settings">
       <label>Categorie</label>
       <select class="cat-select" onchange="updateCategorie(${r.id}, this.value)">
-        ${CATEGORIES.map(c => `<option value="${c}"${r.categorie===c?' selected':''}>${c}</option>`).join('')}
+        ${CATEGORIES.map(c => `<option value="${escHtml(c)}"${r.categorie===c?' selected':''}>${escHtml(c)}</option>`).join('')}
       </select>
       <div class="mob-qw-wrap">
         <label style="margin:0;">QW</label>
@@ -294,9 +294,9 @@ function detailHTML(r) {
       <button class="btn-danger" onclick="removeRow(${r.id})" title="Verwijderen">✕ Verwijderen</button>
     </div>` + SCORES.map(s => `
     <div class="field-group ${s.css}">
-      <label>${EMOJIS[s.key]} ${s.label}</label>
-      <textarea placeholder="Omschrijving voor '${s.label}'…"
-        oninput="updateTekst(${r.id},'${s.key}',this.value)">${escHtml(r.teksten[s.key])}</textarea>
+      <label>${EMOJIS[s.key]} ${escHtml(s.label)}</label>
+      <textarea placeholder="Omschrijving voor '${escHtml(s.label)}'…"
+        oninput="updateTekst(${r.id},${JSON.stringify(s.key)},this.value)">${escHtml(r.teksten[s.key])}</textarea>
     </div>`).join('') + `
   <div class="img-upload-row">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
@@ -354,7 +354,7 @@ function renderTable() {
       <td><input class="naam-input" id="naam-${r.id}" type="text" value="${escHtml(r.naam)}"
         oninput="updateNaam(${r.id}, this.value)" placeholder="Naam variabele…"/></td>
       <td><select class="cat-select" onchange="updateCategorie(${r.id}, this.value)">
-        ${CATEGORIES.map(c => `<option value="${c}"${r.categorie===c?' selected':''}>${c}</option>`).join('')}
+        ${CATEGORIES.map(c => `<option value="${escHtml(c)}"${r.categorie===c?' selected':''}>${escHtml(c)}</option>`).join('')}
       </select></td>
       <td><div class="score-group" id="score-${r.id}">${scoreHTML(r)}</div></td>
       <td style="text-align:center;"><input type="checkbox" id="qw-${r.id}" ${r.quickwin?'checked':''} onchange="toggleQuickwin(${r.id})" title="Quick Win" style="width:18px;height:18px;cursor:pointer;accent-color:#3251c4;"/></td>
@@ -561,7 +561,7 @@ function buildCatSections(activeRows, forHtml) {
         out += `
           <div class="doc-section">
             <div class="doc-var-title"><span class="doc-item-num">${idx+1}</span>${escHtml(r.naam)}</div>
-            <div class="doc-score-badge" style="color:${s.color};background:${s.bg};border-color:${s.border};">${EMOJIS[s.key]} ${s.label}</div>${r.quickwin ? '<span style="display:inline-block;font-size:0.76rem;font-weight:700;padding:3px 11px;border-radius:99px;border:1.5px solid #3251c4;color:#3251c4;background:#eaedfa;margin-left:8px;vertical-align:middle;">⚡ Quick Win</span>' : ''}
+            <div class="doc-score-badge" style="color:${s.color};background:${s.bg};border-color:${s.border};">${EMOJIS[s.key]} ${escHtml(s.label)}</div>${r.quickwin ? '<span style="display:inline-block;font-size:0.76rem;font-weight:700;padding:3px 11px;border-radius:99px;border:1.5px solid #3251c4;color:#3251c4;background:#eaedfa;margin-left:8px;vertical-align:middle;">⚡ Quick Win</span>' : ''}
             <div class="doc-var-text">${escHtml(tekst).replace(/\n/g,'<br/>') || '<em style="color:#a0aec0">Geen tekst ingevuld</em>'}</div>
             ${imgsHtml}
           </div><hr class="doc-divider"/>`;
@@ -572,7 +572,7 @@ function buildCatSections(activeRows, forHtml) {
         out += `
           <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:9pt;color:#6b7280;margin:14pt 0 2pt;">${idx+1}.</p>
           <h3 style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:12pt;color:#23296C;margin:0 0 5pt;">${escHtml(r.naam)}</h3>
-          <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:9pt;color:${s.color};background:${s.bg};border:1pt solid ${s.border};padding:3pt 10pt;border-radius:4pt;display:inline-block;margin-bottom:7pt;font-weight:bold;">${EMOJIS[s.key]} ${s.label}</p>${r.quickwin ? '<p style="font-family:\'Roboto\',\'Segoe UI\',Calibri,sans-serif;font-size:9pt;color:#23296C;background:#eaedfa;border:1pt solid #23296C;padding:3pt 10pt;border-radius:4pt;display:inline-block;margin-bottom:7pt;margin-left:6pt;font-weight:bold;">⚡ Quick Win</p>' : ''}
+          <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:9pt;color:${s.color};background:${s.bg};border:1pt solid ${s.border};padding:3pt 10pt;border-radius:4pt;display:inline-block;margin-bottom:7pt;font-weight:bold;">${EMOJIS[s.key]} ${escHtml(s.label)}</p>${r.quickwin ? '<p style="font-family:\'Roboto\',\'Segoe UI\',Calibri,sans-serif;font-size:9pt;color:#23296C;background:#eaedfa;border:1pt solid #23296C;padding:3pt 10pt;border-radius:4pt;display:inline-block;margin-bottom:7pt;margin-left:6pt;font-weight:bold;">⚡ Quick Win</p>' : ''}
           <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:11pt;color:#2d3748;line-height:1.65;margin:4pt 0 ${imgs.length?'6pt':'14pt'};">${escHtml(tekst).replace(/\n/g,'<br/>')}</p>
           ${imgsWordHtml}`;
       }
@@ -1134,8 +1134,8 @@ function renderLandingCats() {
   wrap.innerHTML = CATEGORIES.map(c => {
     const checked = activeCats.has(c);
     return `<label class="cat-chip${checked ? ' checked' : ''}">
-      <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleLandingCat('${c}', this)"/>
-      ${c}
+      <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleLandingCat(${JSON.stringify(c)}, this)"/>
+      ${escHtml(c)}
     </label>`;
   }).join('');
 }
