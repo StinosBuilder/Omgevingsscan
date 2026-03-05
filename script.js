@@ -1065,6 +1065,32 @@ function importScanFromFile() {
   document.getElementById('import-file-input').click();
 }
 
+function applyImportedScan(p, fileName) {
+  counter        = p.counter        || 0;
+  headerTekst    = p.headerTekst    || '';
+  docHeaderTekst = p.docHeaderTekst || '';
+  docFooterTekst = p.docFooterTekst || '';
+  if (p.categories && p.categories.length) CATEGORIES = p.categories;
+  activeCats     = new Set(p.activeCats && p.activeCats.length ? p.activeCats : CATEGORIES);
+  CATEGORIES.forEach(c => { if (!activeCats.has(c)) activeCats.add(c); });
+  if (p.scores && p.scores.length) { SCORES = p.scores.map(s => ({...s})); rebuildScoreMaps(); }
+  checklistItems   = p.checklistItems   || [];
+  checklistCounter = p.checklistCounter || (checklistItems.length ? Math.max(...checklistItems.map(i=>i.id))+1 : 0);
+  rows           = (p.rows || []).map(r => ({ categorie: 'Algemeen', ...r, expanded: false }));
+  rows.forEach(r => { SCORES.forEach(s => { if (r.teksten && !(s.key in r.teksten)) r.teksten[s.key] = ''; }); });
+  const ht = document.getElementById('header-tekst');
+  const dh = document.getElementById('doc-header-tekst');
+  const df = document.getElementById('doc-footer-tekst');
+  if (ht) ht.value = headerTekst;
+  if (dh) dh.value = docHeaderTekst;
+  if (df) df.value = docFooterTekst;
+  renderCatFilter();
+  renderTable();
+  renderChecklist();
+  saveData();
+  showToast(`✅ Scan geladen vanuit "${fileName}"!`);
+}
+
 function handleImportFile(input) {
   const file = input.files[0];
   if (!file) return;
@@ -1077,29 +1103,7 @@ function handleImportFile(input) {
         return;
       }
       if (rows.length > 0 && !confirm('De huidige scan wordt overschreven. Doorgaan?')) return;
-      counter        = p.counter        || 0;
-      headerTekst    = p.headerTekst    || '';
-      docHeaderTekst = p.docHeaderTekst || '';
-      docFooterTekst = p.docFooterTekst || '';
-      if (p.categories && p.categories.length) CATEGORIES = p.categories;
-      activeCats     = new Set(p.activeCats && p.activeCats.length ? p.activeCats : CATEGORIES);
-      CATEGORIES.forEach(c => { if (!activeCats.has(c)) activeCats.add(c); });
-      if (p.scores && p.scores.length) { SCORES = p.scores.map(s => ({...s})); rebuildScoreMaps(); }
-      checklistItems   = p.checklistItems   || [];
-      checklistCounter = p.checklistCounter || (checklistItems.length ? Math.max(...checklistItems.map(i=>i.id))+1 : 0);
-      rows           = (p.rows || []).map(r => ({ categorie: 'Algemeen', ...r, expanded: false }));
-      rows.forEach(r => { SCORES.forEach(s => { if (r.teksten && !(s.key in r.teksten)) r.teksten[s.key] = ''; }); });
-      const ht = document.getElementById('header-tekst');
-      const dh = document.getElementById('doc-header-tekst');
-      const df = document.getElementById('doc-footer-tekst');
-      if (ht) ht.value = headerTekst;
-      if (dh) dh.value = docHeaderTekst;
-      if (df) df.value = docFooterTekst;
-      renderCatFilter();
-      renderTable();
-      renderChecklist();
-      saveData();
-      showToast(`✅ Scan geladen vanuit "${file.name}"!`);
+      applyImportedScan(p, file.name);
     } catch(err) {
       showToast('⚠️ Fout bij inlezen: ' + err.message);
     }
@@ -1148,33 +1152,11 @@ function handleLandingImport(input) {
         showToast('⚠️ Ongeldig bestand — geen geldige scan-data gevonden.');
         return;
       }
-      counter        = p.counter        || 0;
-      headerTekst    = p.headerTekst    || '';
-      docHeaderTekst = p.docHeaderTekst || '';
-      docFooterTekst = p.docFooterTekst || '';
-      if (p.categories && p.categories.length) CATEGORIES = p.categories;
-      activeCats     = new Set(p.activeCats && p.activeCats.length ? p.activeCats : CATEGORIES);
-      CATEGORIES.forEach(c => { if (!activeCats.has(c)) activeCats.add(c); });
-      if (p.scores && p.scores.length) { SCORES = p.scores.map(s => ({...s})); rebuildScoreMaps(); }
-      checklistItems   = p.checklistItems   || [];
-      checklistCounter = p.checklistCounter || (checklistItems.length ? Math.max(...checklistItems.map(i=>i.id))+1 : 0);
-      rows           = (p.rows || []).map(r => ({ categorie: 'Algemeen', ...r, expanded: false }));
-      rows.forEach(r => { SCORES.forEach(s => { if (r.teksten && !(s.key in r.teksten)) r.teksten[s.key] = ''; }); });
-      const ht = document.getElementById('header-tekst');
-      const dh = document.getElementById('doc-header-tekst');
-      const df = document.getElementById('doc-footer-tekst');
-      if (ht) ht.value = headerTekst;
-      if (dh) dh.value = docHeaderTekst;
-      if (df) df.value = docFooterTekst;
-      renderCatFilter();
-      renderTable();
-      renderChecklist();
-      saveData();
+      applyImportedScan(p, file.name);
       // Ga naar main page
       document.getElementById('landing-page').classList.add('page-hidden');
       document.getElementById('main-page').classList.remove('page-hidden');
       window.scrollTo(0, 0);
-      showToast(`✅ Scan geladen vanuit "${file.name}"!`);
     } catch(err) {
       showToast('⚠️ Fout bij inlezen: ' + err.message);
     }
