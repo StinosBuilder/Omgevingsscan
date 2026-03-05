@@ -507,10 +507,14 @@ function replaceKlant(text) {
   return text.replace(/\[klant\]/gi, klant);
 }
 
+function getCatOrder(activeRows) {
+  return [...CATEGORIES, ...activeRows.map(r=>r.categorie).filter(c=>!CATEGORIES.includes(c)).filter((c,i,a)=>a.indexOf(c)===i)];
+}
+
 // ── Preview modal ──
 function buildCatSections(activeRows, forHtml) {
   // Groepeer op categorie (volgorde CATEGORIES), daarna overige
-  const catOrder = [...CATEGORIES, ...activeRows.map(r=>r.categorie).filter(c=>!CATEGORIES.includes(c)).filter((c,i,a)=>a.indexOf(c)===i)];
+  const catOrder = getCatOrder(activeRows);
   let out = '';
   for (const cat of catOrder) {
     const catRows = activeRows.filter(r => r.categorie === cat);
@@ -675,7 +679,7 @@ async function downloadDoc() {
   }
 
   // ── Categorie secties ──
-  const catOrder = [...CATEGORIES, ...activeRows.map(r=>r.categorie).filter(c=>!CATEGORIES.includes(c)).filter((c,i,a)=>a.indexOf(c)===i)];
+  const catOrder = getCatOrder(activeRows);
   for (const cat of catOrder) {
     const catRows = activeRows.filter(r => r.categorie === cat);
     if (catRows.length === 0) continue;
