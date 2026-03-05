@@ -77,8 +77,8 @@ function emptyTeksten() {
 }
 
 // ── Opslaan & laden ──
-function saveData() {
-  const payload = {
+function buildPayload() {
+  return {
     seedVersion: 1,
     counter, headerTekst, docHeaderTekst, docFooterTekst,
     activeCats: [...activeCats],
@@ -88,7 +88,10 @@ function saveData() {
     checklistCounter: checklistCounter,
     rows: rows.map(r => ({ ...r, expanded: false }))
   };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(buildPayload()));
 }
 
 function loadData() {
@@ -1040,15 +1043,7 @@ function toggleDoneList() {
 /* Library modal functies verwijderd — export/import zit nu in de toolbar */
 
 function exportCurrentScan() {
-  const data = {
-    seedVersion: 1, counter, headerTekst, docHeaderTekst, docFooterTekst,
-    activeCats: [...activeCats],
-    categories: [...CATEGORIES],
-    scores: SCORES.map(s => ({...s})),
-    checklistItems: checklistItems,
-    checklistCounter: checklistCounter,
-    rows: rows.map(r => ({ ...r, expanded: false }))
-  };
+  const data = buildPayload();
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url  = URL.createObjectURL(blob);
