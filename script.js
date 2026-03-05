@@ -182,7 +182,7 @@ function applyFilter() {
     if (mainRow) mainRow.classList.toggle('hidden', !visible);
     if (detRow  && !visible) detRow.style.display = 'none';
   }
-  updateBadges();
+  updateGenerateBtn();
 }
 
 // ── Rijen beheer ──
@@ -200,15 +200,6 @@ function removeRow(id) {
   saveData();
 }
 
-function toggleActive(id) {
-  const r = rows.find(r => r.id === id);
-  if (r) r.actief = !r.actief;
-  updateBadges();
-  updateGenerateBtn();
-  const tr = document.getElementById(`row-${id}`);
-  if (tr) tr.classList.toggle('is-active', r.actief);
-  saveData();
-}
 
 function setScore(id, key) {
   const r = rows.find(r => r.id === id);
@@ -253,7 +244,7 @@ function updateCategorie(id, value) {
   const detRow  = document.getElementById(`detail-${id}`);
   if (mainRow) mainRow.classList.toggle('hidden', !visible);
   if (detRow && !visible) detRow.style.display = 'none';
-  updateBadges();
+  updateGenerateBtn();
   saveData();
 }
 
@@ -334,7 +325,7 @@ function renderTable() {
         <p>Geen rijen. Klik op <strong>+ Rij toevoegen</strong> om te starten.</p>
       </div>
     </td></tr>`;
-    updateBadges(); updateGenerateBtn(); return;
+    updateGenerateBtn(); return;
   }
 
   // Sorteer op categorie (CATEGORIES volgorde), daarna op originele volgorde binnen categorie
@@ -370,12 +361,6 @@ function renderTable() {
     </tr>`;
   }
   tbody.innerHTML = html;
-  updateBadges();
-  updateGenerateBtn();
-}
-
-function updateBadges() {
-  // Badges verwijderd — enkel nog generate-knop bijwerken
   updateGenerateBtn();
 }
 
