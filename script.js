@@ -1,4 +1,13 @@
 
+// ── PB huisstijl & app-constanten ──
+const COLOR_NAVY       = '#23296C';
+const COLOR_GOLD       = '#D4A843';
+const STORAGE_KEY      = 'omgevingsscan_data';
+const DEBOUNCE_TIMEOUT = 400;
+const PAGE_WIDTH       = 11906;   // twips (A4 breedte)
+const PAGE_HEIGHT      = 16838;   // twips (A4 hoogte)
+const PAGE_MARGIN      = 1440;    // twips (~2.54 cm)
+
 const DEFAULT_SCORES = [
   { key: 'Niet',  label: 'Niet in gebruik',    css: 'niet',  color: '#c53030', bg: '#fff5f5', border: '#fc8181', emoji: '🚫' },
   { key: 'Optim', label: 'Optimalisatiekansen', css: 'optim', color: '#b7791f', bg: '#fffbeb', border: '#f6ad55', emoji: '🔧' },
@@ -32,7 +41,6 @@ let docFooterTekst = '';
 let activeCats    = new Set(CATEGORIES); // alle categorieën zichtbaar
 let checklistItems = [];  // [{id, text, done}]
 let checklistCounter = 0;
-const STORAGE_KEY  = 'omgevingsscan_data';
 /* LIBRARY_KEY verwijderd */
 
 function emptyTeksten() {
@@ -130,7 +138,7 @@ function updateDocTekst(part, v)  {
 }
 
 let saveTimer = null;
-function debounceSave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 400); }
+function debounceSave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, DEBOUNCE_TIMEOUT); }
 
 // ── Categorie filter ──
 function renderCatFilter() {
@@ -514,7 +522,7 @@ function buildCatSections(activeRows, forHtml) {
     if (catRows.length === 0) continue;
     out += forHtml
       ? `<div class="doc-cat-section"><div class="doc-cat-section-header"><span class="doc-cat-section-title">${escHtml(cat)}</span><span class="doc-cat-section-count">${catRows.length} item${catRows.length!==1?'s':''}</span></div>`
-      : `<h2 style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:16pt;color:#23296C;padding-bottom:6pt;margin:24pt 0 10pt;">${escHtml(cat)}</h2>`;
+      : `<h2 style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:16pt;color:${COLOR_NAVY};padding-bottom:6pt;margin:24pt 0 10pt;">${escHtml(cat)}</h2>`;
     catRows.forEach((r, idx) => {
       const s     = SCORE_MAP[r.score];
       const tekst = replaceKlant(r.teksten[r.score] || '');
@@ -536,8 +544,8 @@ function buildCatSections(activeRows, forHtml) {
         ).join('');
         out += `
           <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:9pt;color:#6b7280;margin:14pt 0 2pt;">${idx+1}.</p>
-          <h3 style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:12pt;color:#23296C;margin:0 0 5pt;">${escHtml(r.naam)}</h3>
-          <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:9pt;color:${s.color};background:${s.bg};border:1pt solid ${s.border};padding:3pt 10pt;border-radius:4pt;display:inline-block;margin-bottom:7pt;font-weight:bold;">${EMOJIS[s.key]} ${escHtml(s.label)}</p>${r.quickwin ? '<p style="font-family:\'Roboto\',\'Segoe UI\',Calibri,sans-serif;font-size:9pt;color:#23296C;background:#eaedfa;border:1pt solid #23296C;padding:3pt 10pt;border-radius:4pt;display:inline-block;margin-bottom:7pt;margin-left:6pt;font-weight:bold;">⚡ Quick Win</p>' : ''}
+          <h3 style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:12pt;color:${COLOR_NAVY};margin:0 0 5pt;">${escHtml(r.naam)}</h3>
+          <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:9pt;color:${s.color};background:${s.bg};border:1pt solid ${s.border};padding:3pt 10pt;border-radius:4pt;display:inline-block;margin-bottom:7pt;font-weight:bold;">${EMOJIS[s.key]} ${escHtml(s.label)}</p>${r.quickwin ? `<p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:9pt;color:${COLOR_NAVY};background:#eaedfa;border:1pt solid ${COLOR_NAVY};padding:3pt 10pt;border-radius:4pt;display:inline-block;margin-bottom:7pt;margin-left:6pt;font-weight:bold;">⚡ Quick Win</p>` : ''}
           <p style="font-family:'Roboto','Segoe UI',Calibri,sans-serif;font-size:11pt;color:#2d3748;line-height:1.65;margin:4pt 0 ${imgs.length?'6pt':'14pt'};">${escHtml(tekst).replace(/\n/g,'<br/>')}</p>
           ${imgsWordHtml}`;
       }
@@ -776,8 +784,8 @@ async function downloadDoc() {
     sections: [{
       properties: {
         page: {
-          size: { width: 11906, height: 16838 },
-          margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 }
+          size: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
+          margin: { top: PAGE_MARGIN, right: PAGE_MARGIN, bottom: PAGE_MARGIN, left: PAGE_MARGIN }
         },
         titlePage: true,
       },
