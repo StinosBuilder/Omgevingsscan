@@ -1067,6 +1067,13 @@ function applyImportedScan(p, fileName) {
   if (ht) ht.value = headerTekst;
   if (dh) dh.value = docHeaderTekst;
   if (df) df.value = docFooterTekst;
+  // Sync landing-formulier zodat switchPage('scan') de juiste waarden leest
+  const lk = document.getElementById('landing-klant');
+  const lh = document.getElementById('landing-header-tekst');
+  const lf = document.getElementById('landing-footer-tekst');
+  if (lk) lk.value = headerTekst;
+  if (lh) lh.value = docHeaderTekst;
+  if (lf) lf.value = docFooterTekst;
   renderCatFilter();
   renderTable();
   renderChecklist();
@@ -1136,7 +1143,7 @@ function handleLandingImport(input) {
         return;
       }
       applyImportedScan(p, file.name);
-      switchTab('scan');
+      switchPage('scan');
     } catch(err) {
       showToast('⚠️ Fout bij inlezen: ' + err.message);
     }
@@ -1145,50 +1152,36 @@ function handleLandingImport(input) {
   input.value = '';
 }
 
-function goToMain() {
-  // Lees landing-velden
-  const klantVal = document.getElementById('landing-klant').value.trim();
-  const headerVal = document.getElementById('landing-header-tekst').value;
-  const footerVal = document.getElementById('landing-footer-tekst').value;
-
-  // Blanco start (geen regels, counter op 0) — import gaat via aparte knop
-  if (!rows.length) {
-    counter = 0;
-    rows    = [];
+function switchPage(tab) {
+  // Voer pagina-specifieke logica uit vóór de switch
+  if (tab === 'scan') {
+    // Lees landing-velden en stel globals in
+    const klantVal = document.getElementById('landing-klant').value.trim();
+    const headerVal = document.getElementById('landing-header-tekst').value;
+    const footerVal = document.getElementById('landing-footer-tekst').value;
+    if (!rows.length) { counter = 0; rows = []; }
+    headerTekst    = klantVal;
+    docHeaderTekst = headerVal;
+    docFooterTekst = footerVal;
+    const ht = document.getElementById('header-tekst');
+    const dh = document.getElementById('doc-header-tekst');
+    const df = document.getElementById('doc-footer-tekst');
+    if (ht) ht.value = headerTekst;
+    if (dh) dh.value = docHeaderTekst;
+    if (df) df.value = docFooterTekst;
+    renderCatFilter();
+    renderTable();
+    renderChecklist();
+    saveData();
+  } else if (tab === 'start') {
+    // Sync huidige waarden terug naar landing-velden
+    document.getElementById('landing-klant').value = headerTekst;
+    document.getElementById('landing-header-tekst').value = docHeaderTekst;
+    document.getElementById('landing-footer-tekst').value = docFooterTekst;
+    renderLandingCats();
   }
 
-  // Stel de landing-waarden in (overschrijft template-waarden)
-  headerTekst    = klantVal;
-  docHeaderTekst = headerVal;
-  docFooterTekst = footerVal;
-
-  // Sync met hidden inputs
-  const ht = document.getElementById('header-tekst');
-  const dh = document.getElementById('doc-header-tekst');
-  const df = document.getElementById('doc-footer-tekst');
-  if (ht) ht.value = headerTekst;
-  if (dh) dh.value = docHeaderTekst;
-  if (df) df.value = docFooterTekst;
-
-  renderCatFilter();
-  renderTable();
-  renderChecklist();
-  saveData();
-
-  switchTab('scan');
-}
-
-function goToLanding() {
-  // Sync huidige waarden naar landing-velden
-  document.getElementById('landing-klant').value = headerTekst;
-  document.getElementById('landing-header-tekst').value = docHeaderTekst;
-  document.getElementById('landing-footer-tekst').value = docFooterTekst;
-  renderLandingCats();
-
-  switchTab('start');
-}
-
-function switchTab(tab) {
+  // Toon de juiste sectie en markeer actieve tab
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('nav-' + tab).classList.add('active');
 
