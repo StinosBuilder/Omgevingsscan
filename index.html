@@ -167,17 +167,6 @@
     </div>
   </div>
 
-  <!-- Checklist -->
-  <div class="checklist-panel" id="checklist-panel" style="display:none;">
-    <div class="checklist-title">Checklist</div>
-    <div class="checklist-items" id="checklist-open"></div>
-    <button class="checklist-toggle" id="checklist-done-toggle" onclick="toggleDoneList()" style="display:none;">
-      <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      <span id="checklist-done-count">Afgeronde items (0)</span>
-    </button>
-    <div class="checklist-done-list" id="checklist-done"></div>
-  </div>
-
   <!-- Tabel -->
   <div class="card" style="overflow:visible;">
     <table id="main-table">
@@ -273,14 +262,6 @@
           <select id="settings-score-color" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.10);color:white;font-size:0.82rem;cursor:pointer;"></select>
           <select id="settings-score-emoji" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.10);color:white;font-size:0.82rem;cursor:pointer;"></select>
           <button class="settings-add-btn" onclick="addScore()">+ Toevoegen</button>
-        </div>
-      </div>
-      <div class="settings-section">
-        <div class="settings-section-title">Checklist items (taken & vragen)</div>
-        <div class="settings-list" id="settings-checklist-list"></div>
-        <div class="settings-add-row">
-          <input class="settings-add-input" id="settings-checklist-input" type="text" placeholder="Nieuw item… (bijv. 'Inloggegevens opvragen')" onkeydown="if(event.key==='Enter')addChecklistItem()"/>
-          <button class="settings-add-btn" onclick="addChecklistItem()">+ Toevoegen</button>
         </div>
       </div>
     </div>
