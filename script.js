@@ -1198,6 +1198,7 @@ function switchPage(tab) {
   } else if (tab === 'scan') {
     document.getElementById('main-page').classList.remove('page-hidden');
   }
+  localStorage.setItem('omgevingsscan_tab', tab);
   window.scrollTo(0, 0);
 }
 
@@ -1269,4 +1270,6 @@ function initLanding() {
 loadData().then(() => {
   initLanding();
   renderChecklist();
+  const savedTab = localStorage.getItem('omgevingsscan_tab') || 'start';
+  switchPage(savedTab);
 });
