@@ -1136,10 +1136,7 @@ function handleLandingImport(input) {
         return;
       }
       applyImportedScan(p, file.name);
-      // Ga naar main page
-      document.getElementById('landing-page').classList.add('page-hidden');
-      document.getElementById('main-page').classList.remove('page-hidden');
-      window.scrollTo(0, 0);
+      switchTab('scan');
     } catch(err) {
       showToast('⚠️ Fout bij inlezen: ' + err.message);
     }
@@ -1178,10 +1175,7 @@ function goToMain() {
   renderChecklist();
   saveData();
 
-  // Toggle pagina's
-  document.getElementById('landing-page').classList.add('page-hidden');
-  document.getElementById('main-page').classList.remove('page-hidden');
-  window.scrollTo(0, 0);
+  switchTab('scan');
 }
 
 function goToLanding() {
@@ -1191,10 +1185,63 @@ function goToLanding() {
   document.getElementById('landing-footer-tekst').value = docFooterTekst;
   renderLandingCats();
 
-  // Toggle pagina's
-  document.getElementById('main-page').classList.add('page-hidden');
-  document.getElementById('landing-page').classList.remove('page-hidden');
+  switchTab('start');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('nav-' + tab).classList.add('active');
+
+  ['landing-page', 'todos-page', 'main-page'].forEach(id => {
+    document.getElementById(id).classList.add('page-hidden');
+  });
+
+  if (tab === 'start') {
+    document.getElementById('landing-page').classList.remove('page-hidden');
+  } else if (tab === 'todos') {
+    document.getElementById('todos-page').classList.remove('page-hidden');
+    renderTodosPage();
+  } else if (tab === 'scan') {
+    document.getElementById('main-page').classList.remove('page-hidden');
+  }
   window.scrollTo(0, 0);
+}
+
+function renderTodosPage() {
+  const content = document.getElementById('todos-content');
+  const empty   = document.getElementById('todos-empty');
+  if (!content) return;
+
+  if (checklistItems.length === 0) {
+    empty.style.display = '';
+    content.innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const open = checklistItems.filter(i => !i.done);
+  const done = checklistItems.filter(i => i.done);
+
+  let html = '';
+  if (open.length > 0) {
+    html += `<div class="todos-card"><div class="todos-card-title">Open (${open.length})</div>`;
+    html += open.map(item => `
+      <label class="todos-item">
+        <input type="checkbox" onchange="toggleChecklistDone(${item.id}, this.checked); renderTodosPage();">
+        ${escHtml(item.text)}
+      </label>`).join('');
+    html += `</div>`;
+  }
+  if (done.length > 0) {
+    html += `<div class="todos-card"><div class="todos-card-title">Afgerond (${done.length})</div>`;
+    html += done.map(item => `
+      <label class="todos-item done">
+        <input type="checkbox" checked onchange="toggleChecklistDone(${item.id}, this.checked); renderTodosPage();">
+        ${escHtml(item.text)}
+      </label>`).join('');
+    html += `</div>`;
+  }
+  content.innerHTML = html;
 }
 
 function initLanding() {

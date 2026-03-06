@@ -22,6 +22,28 @@
   </div>
 </header>
 
+<!-- ── NAVIGATIEBALK ── -->
+<nav class="app-nav">
+  <div class="nav-inner">
+    <button class="nav-tab active" id="nav-start" onclick="switchTab('start')">Start</button>
+    <button class="nav-tab" id="nav-todos" onclick="switchTab('todos')">To do's</button>
+    <button class="nav-tab" id="nav-scan" onclick="switchTab('scan')">Scan</button>
+  </div>
+</nav>
+
+<!-- ── TODOS PAGE ── -->
+<div id="todos-page" class="page-hidden">
+  <div class="container">
+    <div class="todos-empty" id="todos-empty" style="display:none;">
+      <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+        <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+      </svg>
+      <p>Geen to do's. Voeg items toe via <strong>Instellingen</strong> in de Scan.</p>
+    </div>
+    <div id="todos-content"></div>
+  </div>
+</div>
+
 <!-- ── LANDING PAGE ── -->
 <div id="landing-page" class="landing-page">
   <div class="landing-card">
