@@ -1237,6 +1237,18 @@ function renderTodosPage() {
   content.innerHTML = html;
 }
 
+function addTodoItem() {
+  const input = document.getElementById('todos-add-input');
+  const text = input.value.trim();
+  if (!text) return;
+  checklistItems.push({ id: ++checklistCounter, text, done: false });
+  input.value = '';
+  renderTodosPage();
+  renderChecklist();
+  renderSettingsChecklist();
+  saveData();
+}
+
 function initLanding() {
   // Vul landing met huidige data
   document.getElementById('landing-klant').value = headerTekst;

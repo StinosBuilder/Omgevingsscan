@@ -34,11 +34,25 @@
 <!-- ── TODOS PAGE ── -->
 <div id="todos-page" class="page-hidden">
   <div class="container">
+    <div class="todos-page-header">
+      <div class="todos-page-title">To do's</div>
+    </div>
+    <div class="todos-add-card">
+      <input class="todos-add-input" id="todos-add-input" type="text"
+        placeholder="Nieuw item toevoegen…"
+        onkeydown="if(event.key==='Enter')addTodoItem()"/>
+      <button class="todos-add-btn" onclick="addTodoItem()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Toevoegen
+      </button>
+    </div>
     <div class="todos-empty" id="todos-empty" style="display:none;">
       <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
         <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
       </svg>
-      <p>Geen to do's. Voeg items toe via <strong>Instellingen</strong> in de Scan.</p>
+      <p>Nog geen to do's. Voeg een item toe via het veld hierboven.</p>
     </div>
     <div id="todos-content"></div>
   </div>
