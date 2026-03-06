@@ -1,4 +1,5 @@
-// docx.js v8.x - https://www.npmjs.com/package/docx
+// docx.js v8.5.0 (UMD bundle) - https://www.npmjs.com/package/docx
+// Gebundeld op 2026-02-28 — check npm voor updates
 (function(global2, factory) {
   typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.docx = {}));
 })(this, (function(exports2) {

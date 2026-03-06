@@ -4,6 +4,9 @@ const COLOR_NAVY       = '#23296C';
 const COLOR_GOLD       = '#D4A843';
 const STORAGE_KEY      = 'omgevingsscan_data';
 const DEBOUNCE_TIMEOUT = 400;
+const TOAST_DURATION   = 3500;    // ms toast zichtbaar
+const IMG_MAX_WIDTH    = 500;     // px max afbeelding breedte in docx
+const IMG_MAX_HEIGHT   = 350;     // px max afbeelding hoogte in docx
 const PAGE_WIDTH       = 11906;   // twips (A4 breedte)
 const PAGE_HEIGHT      = 16838;   // twips (A4 hoogte)
 const PAGE_MARGIN      = 1440;    // twips (~2.54 cm)
@@ -741,7 +744,7 @@ async function downloadDoc() {
         try {
           const imgType = dataUriType(src);
           const imgData = dataUriToUint8(src);
-          const dims = await getImageDims(src, 500, 350);
+          const dims = await getImageDims(src, IMG_MAX_WIDTH, IMG_MAX_HEIGHT);
           children.push(new D.Paragraph({
             spacing: { after: 120 },
             children: [new D.ImageRun({
@@ -830,7 +833,7 @@ async function downloadDoc() {
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
+  setTimeout(() => t.classList.remove('show'), TOAST_DURATION);
 }
 
 // ── Settings ──
