@@ -1123,6 +1123,7 @@ function toggleLandingCat(cat, el) {
   if (el.checked) activeCats.add(cat);
   else            activeCats.delete(cat);
   el.closest('.cat-chip').classList.toggle('checked', el.checked);
+  debounceSave();
 }
 
 /* renderLandingTemplates en selectTemplate verwijderd — templates niet meer nodig */
@@ -1251,10 +1252,18 @@ function addTodoItem() {
 
 function initLanding() {
   // Vul landing met huidige data
-  document.getElementById('landing-klant').value = headerTekst;
-  document.getElementById('landing-header-tekst').value = docHeaderTekst;
-  document.getElementById('landing-footer-tekst').value = docFooterTekst;
+  const lk = document.getElementById('landing-klant');
+  const lh = document.getElementById('landing-header-tekst');
+  const lf = document.getElementById('landing-footer-tekst');
+  lk.value = headerTekst;
+  lh.value = docHeaderTekst;
+  lf.value = docFooterTekst;
   renderLandingCats();
+
+  // Auto-save: sla wijzigingen direct op zonder startknop
+  lk.addEventListener('input', () => { headerTekst    = lk.value.trim(); debounceSave(); });
+  lh.addEventListener('input', () => { docHeaderTekst = lh.value;        debounceSave(); });
+  lf.addEventListener('input', () => { docFooterTekst = lf.value;        debounceSave(); });
 }
 
 loadData().then(() => {
