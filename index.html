@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Omgevingsscan</title>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css?v=5" />
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-bg"></div>
+  <div class="header-overlay"></div>
+  <div class="header-content">
+    <img src="Logo wit.png" alt="Logo" class="header-logo"/>
+    <div class="header-divider"></div>
+    <div class="header-text">
+      <h1>Omgevings<span>scan</span></h1>
+    </div>
+    <nav class="stepper" id="stepper">
+      <div class="step active" data-step="0" onclick="navigateTo('landing')">
+        <span class="step-num">1</span>
+        <span class="step-label">Start</span>
+      </div>
+      <div class="step-arrow">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="step" data-step="1" onclick="navigateTo('mapping')">
+        <span class="step-num">2</span>
+        <span class="step-label">Mapping</span>
+      </div>
+      <div class="step-arrow">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="step" data-step="2" onclick="navigateTo('scan')">
+        <span class="step-num">3</span>
+        <span class="step-label">Scan</span>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- ── LANDING PAGE ── -->
+<div id="landing-page" class="landing-page">
+  <div class="landing-card">
+    <div class="landing-header">
+      <div class="landing-title">Nieuwe omgevingsscan</div>
+      <div class="landing-subtitle">Configureer de projectinstellingen voordat je begint</div>
+    </div>
+
+    <div class="landing-body">
+      <!-- Links: klant, categorieën, templates -->
+      <div class="landing-left">
+        <div class="landing-section">
+          <label class="landing-label">Klant / Project</label>
+          <input class="landing-input" id="landing-klant" type="text"
+            placeholder="Voer klant- of projectnaam in…"/>
+        </div>
+
+        <div class="landing-section">
+          <label class="landing-label">Consultant</label>
+          <input class="landing-input" id="landing-consultant" type="text"
+            placeholder="Naam van de consultant…"/>
+        </div>
+
+        <div class="landing-section">
+          <label class="landing-label">Categorieën</label>
+          <div class="landing-cats" id="landing-cat-chips"></div>
+        </div>
+
+        <hr class="landing-divider"/>
+
+        <div class="landing-section">
+          <span class="tpl-section-title">Importeer een bestaande scan (optioneel)</span>
+          <button class="btn-primary" onclick="importScanFromLanding()" style="margin-top:8px;padding:10px 16px;font-size:0.84rem;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.75);width:100%;">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Importeer scan vanuit bestand
+          </button>
+          <input type="file" accept=".json" id="landing-import-input" style="display:none" onchange="handleLandingImport(this)"/>
+        </div>
+      </div>
+
+      <div class="landing-actions">
+        <button class="btn-start" onclick="navigateTo('mapping')">
+          Volgende
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAPPING PAGE ── -->
+<div id="mapping-page" class="page-hidden">
+  <div class="container">
+
+    <!-- Hidden input voor map selectie -->
+    <input type="file" id="folder-input" webkitdirectory multiple style="display:none" onchange="handleFolderImport(this)"/>
+
+    <!-- Uitleg panel -->
+    <div class="mapping-help-panel">
+      <div class="mapping-help-title">Hoe werkt Mapping?</div>
+      <div class="mapping-help-items">
+        <div class="mapping-help-item">
+          <strong>Onderdelen</strong> — Elk onderdeel vertegenwoordigt een proces of functionaliteit die je wilt scannen. Voeg ze toe met <em>+ Onderdeel toevoegen</em>.
+        </div>
+        <div class="mapping-help-item">
+          <strong>Map inladen</strong> — Selecteer een map met analyse-output:
+          <ul style="margin:4px 0 0 18px;list-style:disc;color:rgba(255,255,255,0.60);line-height:1.6;">
+            <li><em>Afbeeldingen</em> (.png, .jpg) worden automatisch gekoppeld aan onderdelen op bestandsnaam.</li>
+            <li><em>Variabelen</em> via CSV of TXT — format: <code>Variabelnaam;Waarde</code> (scheidingsteken: <code>;</code> <code>,</code> of tab).</li>
+          </ul>
+        </div>
+        <div class="mapping-help-item">
+          <strong>Variabelen</strong> — Vul waarden in die automatisch worden ingevuld in teksten. Gebruik <code>/</code> in een tekstveld om snel een variabele in te voegen.
+        </div>
+        <div class="mapping-help-item">
+          <strong>Teksten per score</strong> — Klik op een onderdeel om de teksten per score in te vullen. Gebruik <code>{{variabelnaam}}</code> voor dynamische waarden.
+        </div>
+        <div class="mapping-help-item">
+          <strong>Instellingen (tandwiel)</strong> — Beheer categorieen, scores, en globale variabelen. Voeg nieuwe scores of variabelen toe die voor alle onderdelen beschikbaar zijn.
+        </div>
+        <div class="mapping-help-item">
+          <strong>Exporteren / Importeren</strong> — Sla je scan op als JSON-bestand en laad het later weer in.
+        </div>
+      </div>
+    </div>
+
+    <!-- Mapping toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button class="btn-primary" onclick="addRow()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Onderdeel toevoegen
+        </button>
+        <button class="btn-primary" onclick="loadFolder()" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+          Map inladen
+        </button>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn-primary" onclick="openSettings()" title="Instellingen" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);padding:6px 8px;min-width:0;">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+        <button class="btn-primary" onclick="saveVersion()" title="Lokaal opslaan met versienummer">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+          </svg>
+          Opslaan
+        </button>
+        <button class="btn-primary" onclick="showVersionModal()" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);" title="Versiegeschiedenis">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Versies
+        </button>
+        <button class="btn-primary" onclick="exportCurrentScan()" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Exporteren
+        </button>
+        <button class="btn-primary" onclick="importScanFromFile()" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Importeren
+        </button>
+        <input type="file" accept=".json" id="import-file-input" style="display:none" onchange="handleImportFile(this)"/>
+      </div>
+    </div>
+
+    <!-- Variabelen panel (alleen variabelen, geen taken) -->
+    <div class="checklist-panel" id="mapping-checklist-panel" style="display:none;">
+      <div class="checklist-title">Variabelen</div>
+      <div class="checklist-items" id="mapping-checklist-open"></div>
+    </div>
+
+    <!-- Mapping cards -->
+    <div id="mapping-cards"></div>
+
+    <div style="padding:16px 0;display:flex;justify-content:space-between;align-items:center;">
+      <button class="btn-primary" onclick="addRow()" style="font-size:0.82rem;padding:7px 14px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);opacity:0.75;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Onderdeel toevoegen
+      </button>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-step-nav" onclick="navigateTo('landing')">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          Vorige
+        </button>
+        <button class="btn-start" onclick="navigateTo('scan')">
+          Volgende
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div><!-- /mapping-page -->
+
+<!-- ── SCAN PAGE (tabel + toolbar) ── -->
+<div id="scan-page" class="page-hidden">
+
+<!-- ── CONTAINER ── -->
+<div class="container">
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <input type="file" id="bulk-img-input" multiple accept="image/png,image/jpeg,image/gif,image/webp" style="display:none" onchange="handleBulkImgImport(this)"/>
+    </div>
+    <div class="toolbar-right">
+    <button class="btn-success" id="btn-generate" onclick="showPreview()" disabled style="background:#27ae60;border-color:#27ae60;">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+      </svg>
+      Document genereren
+    </button>
+    </div>
+  </div>
+
+  <!-- To-do lijst -->
+  <div class="checklist-panel" id="scan-todo-panel">
+    <div class="checklist-title" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>📋 To-do lijst</span>
+    </div>
+    <div class="checklist-items" id="scan-todo-open"></div>
+    <button class="checklist-toggle" id="scan-todo-done-toggle" onclick="toggleScanTodoDone()" style="display:none;">
+      <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      <span id="scan-todo-done-count">Afgeronde items (0)</span>
+    </button>
+    <div class="checklist-done-list" id="scan-todo-done"></div>
+    <div class="scan-todo-add">
+      <input type="text" id="scan-todo-input" placeholder="Nieuw to-do item…" onkeydown="if(event.key==='Enter')addScanTodo()"/>
+      <button class="btn-add-todo" onclick="addScanTodo()">+ Toevoegen</button>
+    </div>
+  </div>
+
+  <!-- Taken / Checklist (alleen taken, geen variabelen) -->
+  <div class="checklist-panel" id="checklist-panel" style="display:none;">
+    <div class="checklist-title">Taken</div>
+    <div class="checklist-items" id="checklist-open"></div>
+    <button class="checklist-toggle" id="checklist-done-toggle" onclick="toggleDoneList()" style="display:none;">
+      <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      <span id="checklist-done-count">Afgeronde items (0)</span>
+    </button>
+    <div class="checklist-done-list" id="checklist-done"></div>
+  </div>
+
+  <!-- Standaard tekst bovenin document -->
+  <div class="mapping-std-tekst" style="margin-bottom:18px;">
+    <label class="landing-label">Standaard tekst bovenin document</label>
+    <div class="rich-toolbar"><button type="button" onmousedown="event.preventDefault(); applyFormat('bold')" title="Vet"><b>B</b></button><button type="button" onmousedown="event.preventDefault(); applyFormat('italic')" title="Cursief"><i>I</i></button><button type="button" onmousedown="event.preventDefault(); applyFormat('underline')" title="Onderstreept"><u>U</u></button><button type="button" onmousedown="event.preventDefault(); applyFormat('insertUnorderedList')" title="Lijst">&#8226;</button></div>
+    <div class="rich-editor landing-textarea" contenteditable="true" id="mapping-header-tekst"
+      data-placeholder="Introductietekst die bovenaan het document verschijnt…"
+      oninput="updateDocTekst('header', sanitizeEditorHtml(this.innerHTML))"
+      style="min-height:100px;"></div>
+  </div>
+
+  <!-- Scan: kaarten per onderdeel -->
+  <div id="scan-cards"></div>
+
+  <!-- Standaard tekst onderaan document -->
+  <div class="mapping-std-tekst" style="margin-top:18px;margin-bottom:14px;">
+    <label class="landing-label">Standaard tekst onderaan document</label>
+    <div class="rich-toolbar"><button type="button" onmousedown="event.preventDefault(); applyFormat('bold')" title="Vet"><b>B</b></button><button type="button" onmousedown="event.preventDefault(); applyFormat('italic')" title="Cursief"><i>I</i></button><button type="button" onmousedown="event.preventDefault(); applyFormat('underline')" title="Onderstreept"><u>U</u></button><button type="button" onmousedown="event.preventDefault(); applyFormat('insertUnorderedList')" title="Lijst">&#8226;</button></div>
+    <div class="rich-editor landing-textarea" contenteditable="true" id="mapping-footer-tekst"
+      data-placeholder="Afsluitende tekst die onderaan het document verschijnt…"
+      oninput="updateDocTekst('footer', sanitizeEditorHtml(this.innerHTML))"
+      style="min-height:100px;"></div>
+  </div>
+
+  <!-- Navigatie onderaan -->
+  <div class="mapping-bottom-bar">
+    <div></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-step-nav" onclick="navigateTo('mapping')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Vorige
+      </button>
+    </div>
+  </div>
+</div>
+</div><!-- /scan-page -->
+
+<!-- ── UNMATCHED IMAGES MODAL ── -->
+<div class="unmatch-backdrop" id="unmatch-modal">
+  <div class="unmatch-shell">
+    <div class="unmatch-header">
+      <div class="unmatch-title">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        Niet herkende afbeeldingen
+      </div>
+      <button class="btn-close-modal" onclick="closeUnmatchedModal()">✕ Sluiten</button>
+    </div>
+    <div class="unmatch-body">
+      <p class="unmatch-intro">Deze afbeeldingen konden niet automatisch worden gekoppeld. Selecteer de juiste rij of kies <em>Overslaan</em>.</p>
+      <div class="unmatch-list" id="unmatch-list"></div>
+      <div class="unmatch-footer">
+        <button class="btn-primary" onclick="saveUnmatchedMappings()">✓ Koppelen & sluiten</button>
+        <button class="btn-close-modal" onclick="closeUnmatchedModal()" style="background:#f7f8fc;color:#4a5568;border:1px solid #e2e8f0;">Alles overslaan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SETTINGS MODAL ── -->
+<div class="modal-backdrop" id="settings-modal" onclick="closeSettingsOnBackdrop(event)">
+  <div class="modal-shell" style="max-width:900px;">
+    <div class="modal-toolbar">
+      <div class="modal-toolbar-title">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        Instellingen
+      </div>
+      <button class="btn-close-modal" onclick="closeSettings()">✕ Sluiten</button>
+    </div>
+    <div class="settings-body">
+      <div class="settings-section">
+        <div class="settings-section-title">Categorieën</div>
+        <div class="settings-list" id="settings-cat-list"></div>
+        <div class="settings-add-row">
+          <input class="settings-add-input" id="settings-cat-input" type="text" placeholder="Nieuwe categorie…" onkeydown="if(event.key==='Enter')addCategory()"/>
+          <button class="settings-add-btn" onclick="addCategory()">+ Toevoegen</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">Scores</div>
+        <div class="settings-list" id="settings-score-list"></div>
+        <div class="settings-add-row" style="flex-wrap:wrap;gap:6px;">
+          <input class="settings-add-input" id="settings-score-label" type="text" placeholder="Nieuw score label…" style="flex:1;min-width:120px;" onkeydown="if(event.key==='Enter')addScore()"/>
+          <select id="settings-score-color" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.10);color:white;font-size:0.82rem;cursor:pointer;" class="cat-select"></select>
+          <select id="settings-score-emoji" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.10);color:white;font-size:0.82rem;cursor:pointer;" class="cat-select"></select>
+          <button class="settings-add-btn" onclick="addScore()">+ Toevoegen</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">Taken</div>
+        <div class="settings-list" id="settings-todos-list"></div>
+        <div class="settings-add-row">
+          <input class="settings-add-input" id="settings-todo-input" type="text" placeholder="Nieuwe taak…" style="flex:1;" onkeydown="if(event.key==='Enter')addTodoItem()"/>
+          <button class="settings-add-btn" onclick="addTodoItem()">+ Toevoegen</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">Variabelen</div>
+        <div class="settings-list" id="settings-vars-list"></div>
+        <div class="settings-add-row" style="flex-wrap:wrap;gap:6px;">
+          <input class="settings-add-input" id="settings-var-input" type="text" placeholder="Nieuwe variabele…" style="flex:1;min-width:140px;" onkeydown="if(event.key==='Enter')addVarItem()"/>
+          <select id="settings-var-type" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.10);color:white;font-size:0.82rem;cursor:pointer;">
+            <option value="text">Tekst</option>
+            <option value="number">Nummer</option>
+          </select>
+          <button class="settings-add-btn" onclick="addVarItem()">+ Toevoegen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── LIBRARY MODAL ── -->
+<!-- Library modal verwijderd — export/import zit nu direct in de toolbar -->
+
+<!-- ── PREVIEW MODAL ── -->
+<div class="modal-backdrop" id="preview-modal" onclick="closePreviewOnBackdrop(event)">
+  <div class="modal-shell">
+    <div class="modal-toolbar">
+      <div class="modal-toolbar-title">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Documentvoorbeeld
+      </div>
+      <div class="modal-toolbar-actions">
+        <button class="btn-download" onclick="downloadPdf()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Downloaden als PDF
+        </button>
+        <button class="btn-close-modal" onclick="closePreview()">✕ Sluiten</button>
+      </div>
+    </div>
+    <div class="doc-paper" id="doc-paper-content"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+
+<script src="script.js?v=5"></script>
+</body>
+</html>

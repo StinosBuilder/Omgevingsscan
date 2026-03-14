@@ -1,0 +1,23 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+~$*
+*.tmp
+*.bak
+*.swp
+
+# Dependencies
+node_modules/
+docx.umd.js
+
+# Klant- en werkbestanden (niet publiceren)
+Completed scans/
+Huidige scan/
+PB-layout/
+backup_*/
+Omgevingsscan_PB.docx
+Stappenplan Omgevingsscan App.docx
+VBA.txt
